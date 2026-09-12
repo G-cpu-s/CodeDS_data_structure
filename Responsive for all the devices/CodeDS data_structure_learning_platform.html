@@ -1,0 +1,2414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeDS</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;color:#0f1111;background:#f3f5f6}
+a{text-decoration:none;color:inherit}
+button{font:inherit;cursor:pointer}
+
+/* ---------- TOP BAR ---------- */
+.topbar{
+  background:#131921;color:#fff;display:flex;align-items:center;position:relative;
+  gap:22px;padding:11px 16px;flex-wrap:wrap
+}
+.topbar-center{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  font-size:22px;font-weight:700;color:#fff;white-space:nowrap;pointer-events:none
+}
+.logo{font-size:24px;font-weight:700;color:#fff;white-space:nowrap;padding:6px 8px;border:1px solid transparent;border-radius:3px}
+.logo:hover{border-color:#fff}
+.tb-item{display:flex;flex-direction:column;line-height:1.15;font-size:12px;padding:6px 8px;border:1px solid transparent;border-radius:3px;white-space:nowrap}
+.tb-item:hover{border-color:#fff}
+.tb-item b{font-size:13.5px;font-weight:700}
+.tb-item .sub{color:#ddd}
+.services-tag{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:700}
+.services-tag .code-icn{color:#febd69}
+
+.search{
+  flex:1;min-width:220px;display:flex;height:38px;border-radius:5px;overflow:hidden
+}
+.search select{border:0;background:#e6e6e6;padding:0 8px;font-size:12px;border-right:1px solid #a5a5a5}
+.search input{flex:1;border:0;padding:0 10px;font-size:14px;outline:0}
+.search button{width:44px;background:#febd69;border:0;font-size:16px}
+.search button:hover{background:#f3a847}
+
+.search-toast{
+  position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:#c7511f;color:#fff;padding:12px 24px;border-radius:8px;
+  font-size:14px;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.3);
+  z-index:999;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s
+}
+.search-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.signup{display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:700;padding:8px 14px;border:1px solid transparent;border-radius:4px;white-space:nowrap;background:#febd69;color:#131921}
+.signup:hover{background:#f3a847;border-color:#f3a847}
+
+.nav-group{display:flex;align-items:center;gap:22px;flex-wrap:nowrap}
+
+/* ---------- CATEGORY BAR ---------- */
+.catbar{
+  background:#232f3e;color:#fff;display:flex;align-items:center;
+  gap:22px;padding:9px 16px;font-size:13.5px;overflow-x:auto
+}
+.catbar a{padding:5px 6px;border:1px solid transparent;border-radius:3px;white-space:nowrap}
+.catbar a:hover{border-color:#fff}
+.catbar .all{font-weight:700;display:flex;align-items:center;gap:6px}
+.catbar .spacer{flex:1}
+.catbar select{background:#232f3e;color:#fff;border:1px solid #48566b;border-radius:3px;padding:4px 6px;font-size:12px}
+
+/* ---------- HERO ---------- */
+.hero{width:100%;height:340px;overflow:hidden;position:relative}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ---------- CONCEPT GRID ---------- */
+.grid-wrap{max-width:1400px;margin:-60px auto 0;padding:0 16px 40px;position:relative;z-index:2}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:18px}
+.concept-card{background:#fff;border-radius:2px;box-shadow:0 2px 6px rgba(0,0,0,.18);overflow:hidden;cursor:pointer;transition:box-shadow .15s}
+.concept-card:hover{box-shadow:0 6px 16px rgba(0,0,0,.28)}
+.concept-head{padding:16px 18px 10px}
+.concept-head h3{font-size:18px;font-weight:700}
+.concept-body{height:150px;display:flex;align-items:center;justify-content:center;position:relative}
+.concept-foot{padding:8px 18px 16px;font-size:12.5px;color:#007185;font-weight:600}
+
+/* Array */
+.bg-array{background:#eef4f2}
+.array-demo{display:flex;flex-direction:column;align-items:center;gap:6px}
+.array-boxes{display:flex}
+.array-boxes span{width:46px;height:46px;border:2px solid #232f3e;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;background:#fff}
+.array-idx{display:flex}
+.array-idx span{width:46px;text-align:center;color:#c7511f;font-weight:700;font-size:13px}
+
+/* Sorting */
+.bg-sort{background:#3fa66d}
+.sort-bars{display:flex;align-items:flex-end;gap:8px;height:100px}
+.sort-bars i{display:block;width:16px;background:#fff;border-radius:2px 2px 0 0}
+
+/* Bitmask */
+.bg-bit{background:#c3d92e}
+.bit-wrap{display:flex;align-items:center;gap:12px}
+.bit-wrap .and-label{font-weight:800;color:#232f3e;font-size:15px}
+.bit-grid{display:grid;grid-template-columns:repeat(4,26px);grid-auto-rows:26px;gap:4px}
+.bit-grid span{background:#232f3e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border-radius:2px}
+
+/* Linked List */
+.bg-ll{background:#4a55a2}
+.ll-wrap{display:flex;align-items:center;gap:0}
+.ll-node{width:44px;height:34px;background:#fff;border-radius:3px;display:flex}
+.ll-node div{flex:1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#232f3e}
+.ll-node div:first-child{border-right:1px solid #999}
+.ll-arrow{width:26px;height:2px;background:#fff;position:relative}
+.ll-arrow:after{content:'';position:absolute;right:0;top:-4px;border:5px solid transparent;border-left-color:#fff}
+.ll-head{color:#fff;font-size:11px;font-weight:700;margin-right:6px}
+
+/* Union Find */
+.bg-uf{background:linear-gradient(180deg,#f0952c 0%,#f6c453 100%)}
+.uf-wrap{display:flex;gap:10px}
+.uf-set{display:flex;flex-direction:column;align-items:center;gap:4px}
+.uf-set .root{width:34px;height:34px;border-radius:50%;background:#232f3e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.uf-set .leaf{width:26px;height:26px;border-radius:50%;background:#fff;border:2px solid #232f3e;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.uf-line{width:2px;height:14px;background:#232f3e}
+
+/* Fenwick */
+.bg-fen{background:#e8792c}
+.fen-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.fen-circles{display:flex;gap:8px}
+.fen-circles span{width:26px;height:26px;border-radius:50%;background:#fff;color:#e8792c;font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:center}
+.fen-bars{display:flex;gap:8px;align-items:flex-end;height:34px}
+.fen-bars i{width:6px;background:#fff;border-radius:2px 2px 0 0}
+
+/* Segment Tree */
+.bg-seg{background:#f6c453}
+.seg-wrap{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;max-width:230px}
+.seg-wrap span{background:#232f3e;color:#fff;font-size:10.5px;font-weight:700;padding:5px 6px;border-radius:2px}
+
+/* Graph */
+.bg-graph{background:#16202e}
+.graph-svg{width:170px;height:120px}
+
+/* Stack */
+.bg-stack{background:#7b4fa6}
+.stack-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.stack-boxes{display:flex;flex-direction:column-reverse;gap:3px}
+.stack-boxes span{width:70px;height:24px;background:#fff;color:#7b4fa6;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;border-radius:2px}
+.stack-label{color:#fff;font-size:11px;font-weight:700}
+
+/* Queue */
+.bg-queue{background:#1f8a8a}
+.queue-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.queue-boxes{display:flex;gap:3px}
+.queue-boxes span{width:34px;height:34px;background:#fff;color:#1f8a8a;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;border-radius:2px}
+.queue-labels{display:flex;justify-content:space-between;width:100%;color:#fff;font-size:10.5px;font-weight:700}
+
+/* Binary Search Tree */
+.bg-bst{background:#2e4d33}
+.bst-svg{width:170px;height:120px}
+
+.section-sep{background:#232f3e;color:#fff;text-align:center;padding:14px;font-size:13px}
+.section-sep b{cursor:pointer}
+.break-banner{background:#e9f0ee;text-align:center;padding:16px;font-size:14px}
+.break-banner a{color:#c7511f;font-weight:700}
+.break-banner a:hover{text-decoration:underline}
+.play-highlight{
+  display:inline-block;background:#febd69;color:#131921!important;
+  padding:4px 14px;border-radius:20px;margin-left:4px;font-weight:800;
+  box-shadow:0 0 0 rgba(254,189,105,.6);animation:play-pulse 1.8s infinite;
+  position:relative;top:6px
+}
+.play-highlight:hover{background:#f3a847;text-decoration:none!important}
+@keyframes play-pulse{
+  0%{box-shadow:0 0 0 0 rgba(254,189,105,.55)}
+  70%{box-shadow:0 0 0 10px rgba(254,189,105,0)}
+  100%{box-shadow:0 0 0 0 rgba(254,189,105,0)}
+}
+
+/* ---------- LANGUAGE HERO ---------- */
+.lang-hero{max-width:1400px;margin:30px auto 0;padding:0 16px}
+.lang-hero h1{font-size:28px;margin-bottom:8px}
+.lang-hero p{color:#565959;font-size:14px;max-width:700px}
+.lang-hero .accent{color:var(--lang-accent,#febd69);font-weight:700}
+
+/* ---------- COURSE LIST ---------- */
+.course-wrap{max-width:1400px;margin:24px auto 0;padding:0 16px 50px}
+.course-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.course-card{background:#fff;border-radius:2px;box-shadow:0 2px 6px rgba(0,0,0,.18);overflow:hidden;cursor:pointer;transition:box-shadow .15s}
+.course-card:hover{box-shadow:0 6px 16px rgba(0,0,0,.28)}
+.course-body{height:90px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:700;background:var(--lang-accent,#febd69)}
+.course-info{padding:14px 16px}
+.course-info h3{font-size:15px;margin-bottom:6px}
+.course-info span{font-size:12.5px;color:#007185;font-weight:600}
+
+/* ---------- ENROLL / ALL COURSES ---------- */
+.enroll-wrap{max-width:900px;margin:20px auto 0;padding:0 16px 60px}
+.enroll-lang-block{margin-bottom:34px}
+.enroll-lang-title{font-size:20px;font-weight:700;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid currentColor}
+.enroll-list{display:flex;flex-direction:column;gap:10px}
+.enroll-item{display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.12);padding:14px 18px;transition:box-shadow .15s}
+.enroll-item:hover{box-shadow:0 5px 14px rgba(0,0,0,.2)}
+.enroll-item-info h3{font-size:15px;margin-bottom:4px}
+.enroll-item-info p{font-size:12.5px;color:#565959;line-height:1.5}
+.enroll-btn{flex-shrink:0;background:#febd69;color:#131921;border:0;border-radius:6px;padding:9px 18px;font-weight:700;font-size:12.5px;cursor:pointer}
+.enroll-btn:hover{background:#f3a847}
+@media(max-width:600px){
+  .enroll-item{flex-direction:column;align-items:flex-start}
+  .enroll-btn{width:100%}
+}
+
+/* ---------- CONCEPT DETAIL PAGES ---------- */
+.concept-detail{max-width:900px;margin:0 auto;padding:0 16px 60px}
+.concept-detail h2{font-size:18px;margin:22px 0 8px;color:#131921}
+.concept-detail p{font-size:14px;color:#333;line-height:1.6}
+.concept-detail ul{margin:6px 0 0 20px;font-size:14px;color:#333;line-height:1.9}
+.concept-detail table{width:100%;border-collapse:collapse;margin-top:8px}
+.concept-detail th,.concept-detail td{border:1px solid #ddd;padding:8px 10px;font-size:13px;text-align:left}
+.concept-detail th{background:#f3f5f6}
+.back-link{display:inline-block;margin-top:28px;color:#007185;font-weight:700;font-size:14px;cursor:pointer}
+.back-link:hover{text-decoration:underline}
+
+.video-embed{position:relative;width:100%;max-width:640px;aspect-ratio:16/9;margin-top:8px}
+.video-embed iframe{width:100%;height:100%;border:0;border-radius:4px}
+.video-link{display:inline-block;margin-top:10px;color:#007185;font-weight:700;font-size:14px}
+.video-link:hover{text-decoration:underline}
+
+/* ---------- MULTI-VIEW SWITCHING ---------- */
+.view{display:none}
+.view.active-view{display:block}
+.catbar a.active{border-color:#febd69;color:#febd69}
+
+/* ---------- FOOTER ---------- */
+footer{background:#131921;color:#ddd}
+.foot-cols{max-width:900px;margin:auto;display:grid;grid-template-columns:1fr 1fr auto;gap:20px;padding:40px 24px;align-items:start}
+.foot-cols h4{font-size:15px;font-weight:700;margin-bottom:14px;color:#fff}
+.foot-cols a{display:block;font-size:12.5px;color:#ccc;margin-bottom:9px}
+.foot-cols a:hover{text-decoration:underline}
+.foot-social{display:flex;flex-direction:column;align-items:flex-start}
+.foot-social-icons{display:flex;gap:12px}
+.foot-social-icons a{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:#232f3e;color:#fff;margin-bottom:0;transition:background .15s,transform .15s}
+.foot-social-icons a:hover{background:#febd69;color:#131921;transform:translateY(-2px)}
+.foot-social-icons svg{width:16px;height:16px;fill:currentColor}
+.foot-brand{text-align:center;padding:18px;border-top:1px solid #3a4553;font-size:15px;letter-spacing:.5px}
+.foot-copy{text-align:center;padding:14px;font-size:11.5px;color:#999;border-top:1px solid #3a4553}
+
+@media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}.foot-cols{grid-template-columns:repeat(2,1fr)}.foot-social{grid-column:1/-1;align-items:center;margin-top:6px}.foot-social-icons{justify-content:center}}
+@media(max-width:600px){
+  .grid{grid-template-columns:1fr}
+  .foot-cols{grid-template-columns:1fr}
+  .foot-social{align-items:center}
+  .foot-social-icons{justify-content:center}
+  .hero{height:220px}
+  .grid-wrap{margin-top:-30px}
+  .nav-group{flex-wrap:wrap}
+  .signup{width:100%;order:99;padding:10px 14px}
+  .topbar-center{display:none}
+}
+
+/* ---------- TIC TAC TOE (merged) ---------- */
+.ttt-section{
+  font-family:Georgia,'Times New Roman',serif;background:#f3c987;color:#3a2f22;
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:40px 20px
+}
+.ttt-wrap{width:min(420px,94vw)}
+.ttt-status{font-size:29px;font-weight:400;margin-bottom:20px;min-height:36px}
+.ttt-new-game{
+  background:#3d3b32;color:#fff;border:0;border-radius:7px;padding:10px 18px;
+  font-family:Arial,Helvetica,sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;margin-bottom:26px
+}
+.ttt-new-game:hover{background:#2a2921}
+.ttt-title{font-size:28px;font-weight:400;margin-bottom:22px}
+.ttt-board{width:300px;max-width:90vw;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ttt-cell{
+  height:90px;background:#edf7fb;border:0;border-radius:11px;
+  box-shadow:0 3px 8px rgba(102,80,44,.19);color:#2864a7;font-size:48px;
+  font-family:Georgia,serif;cursor:pointer
+}
+.ttt-cell:hover{background:#fff}
+.ttt-cell.x{color:#2864a7}
+.ttt-cell.o{color:#3b2fa0}
+.ttt-reset{
+  margin-top:30px;background:#3d3b32;color:#fff;border:0;border-radius:7px;
+  padding:10px 20px;font-family:Arial,Helvetica,sans-serif;font-size:12.5px;cursor:pointer
+}
+.ttt-reset:hover{background:#2a2921}
+.ttt-home-link{display:block;margin-top:22px;font-family:Arial,Helvetica,sans-serif;font-size:12.5px;color:#3a2f22;text-decoration:underline;cursor:pointer}
+
+/* ---------- LOGIN (merged) ---------- */
+.lg-nav{
+  position:absolute;top:0;left:0;width:100%;z-index:5;
+  display:flex;flex-direction:column;align-items:center;
+  padding:22px 5%;color:#fff;box-sizing:border-box;gap:16px
+}
+.lg-logo{font-size:26px;font-weight:700;color:#fff}
+.lg-navlinks{display:flex;width:100%;align-items:center;justify-content:center;gap:37px;font-size:15px;flex-wrap:wrap}
+.lg-navlinks a{cursor:pointer;transition:.2s;color:#fff}
+.lg-navlinks a:hover{color:#63ddd5}
+.lg-login-nav{border:1px solid #fff;padding:9px 22px;border-radius:6px;flex-shrink:0}
+.lg-login-nav:hover{background:rgba(255,255,255,.15)}
+
+@media (max-width:480px){
+  .lg-nav{padding:16px 4%;gap:10px}
+  .lg-logo{font-size:20px}
+  .lg-navlinks{gap:16px;font-size:13px}
+  .lg-login-nav{padding:6px 14px}
+}
+
+.lg-login-page{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:40px 20px;position:relative;
+  background:
+   linear-gradient(rgba(0,20,25,.15),rgba(0,20,25,.25)),
+   url("https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=2000&q=90")
+   center/cover fixed;
+}
+.lg-login-box{
+  position:relative;width:min(400px,92vw);padding:38px 42px 32px;text-align:center;color:#1a2b2a;
+  background:rgba(255,220,150,.28);border:1.5px solid rgba(255,255,255,.6);
+  border-radius:16px;box-shadow:0 20px 55px rgba(0,0,0,.35);
+  backdrop-filter:blur(10px)
+}
+.lg-close{position:absolute;right:16px;top:12px;border:0;background:none;color:#1a2b2a;font-size:24px;cursor:pointer;line-height:1}
+.lg-login-box h1{font-size:34px;font-weight:700;margin-bottom:32px;color:#111}
+.lg-field{position:relative;margin-bottom:26px;text-align:left}
+.lg-field input{
+  width:100%;height:36px;padding:4px 30px 4px 2px;border:0;
+  border-bottom:1.5px solid rgba(20,30,30,.6);outline:0;background:transparent;
+  color:#111;font-size:15px
+}
+.lg-field input::placeholder{color:#2a2a2a}
+.lg-field-icon{position:absolute;right:2px;bottom:8px;font-size:15px;color:#333}
+.lg-login-options{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;margin:0 0 24px}
+.lg-remember{display:flex;align-items:center;gap:6px}
+.lg-remember input{width:13px;height:13px}
+.lg-login-options a{color:#173b39;font-weight:600}
+.lg-login-options a:hover{text-decoration:underline}
+.lg-login-btn{
+  width:100%;height:42px;border:0;border-radius:6px;background:#1e2a33;
+  color:#fff;font-weight:700;font-size:15px;cursor:pointer;box-shadow:0 3px 10px #0003
+}
+.lg-login-btn:hover{background:#141d24}
+.lg-register{font-size:13px;margin-top:18px;color:#1a2b2a}
+.lg-register a{font-weight:700;color:#111}
+.lg-register a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="logo" href="#home" onclick="showView('home')">Code<span style="color:#febd69">DS</span></a>
+  <div class="topbar-center">Code<span style="color:#febd69">DS</span></div>
+  <form class="search" id="searchForm" onsubmit="return runSearch(event)">
+    <select id="searchSelect">
+      <option>All</option>
+      <option>Arrays</option>
+      <option>Sorting</option>
+      <option>Trees</option>
+      <option>Graphs</option>
+    </select>
+    <input type="text" id="searchInput" placeholder="search your data structure">
+    <button type="submit">🔍</button>
+  </form>
+  <div class="nav-group">
+    <a class="tb-item services-tag" href="#home" onclick="showView('home');setTimeout(()=>document.getElementById('grid').scrollIntoView({behavior:'smooth'}),0)"><span class="code-icn">&lt;/&gt;</span><span>services<br>code</span></a>
+    <a class="tb-item" href="#login" onclick="showView('login')"><span class="sub">Hello, sign in</span><b>Account &amp; lists</b></a>
+    <a class="tb-item" href="#enroll" onclick="showView('enroll')"><span class="sub">Enroll &amp;</span><b>courses</b></a>
+    <a class="signup" href="#login" onclick="showView('login')">Sign up<span>➕</span></a>
+  </div>
+</div>
+
+<div id="searchToast" class="search-toast">Sorry, the course is not available</div>
+
+<div class="catbar">
+  <a class="all" href="#home" data-view="home">☰ All</a>
+  <a href="#javascript" data-view="javascript">Java Script</a>
+  <a href="#python" data-view="python">Python</a>
+  <a href="#java" data-view="java">Java</a>
+  <a href="#cpp" data-view="cpp">C++</a>
+  <a href="#csharp" data-view="csharp">C#</a>
+  <div class="spacer"></div>
+  <select><option>Basic</option><option>Intermediate</option><option>Advanced</option></select>
+</div>
+
+<section class="view active-view" id="view-home">
+<div class="hero">
+  <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=80" alt="Global technology network">
+</div>
+
+<div class="grid-wrap" id="grid">
+  <div class="grid">
+
+    <div class="concept-card" onclick="location.hash='concept-array'">
+      <div class="concept-head"><h3>Array Concept</h3></div>
+      <div class="concept-body bg-array">
+        <div class="array-demo">
+          <div class="array-boxes"><span>2</span><span>5</span><span>1</span><span>&nbsp;</span></div>
+          <div class="array-idx"><span>0</span><span>1</span><span>2</span><span>3</span></div>
+        </div>
+      </div>
+      <div class="concept-foot">Learn arrays &rsaquo;</div>
+    </div>
+
+    <div class="concept-card" onclick="location.hash='concept-sorting'">
+      <div class="concept-head"><h3>Sorting Concept</h3></div>
+      <div class="concept-body bg-sort">
+        <div class="sort-bars">
+          <i style="height:30px"></i><i style="height:45px"></i><i style="height:60px"></i>
+          <i style="height:75px"></i><i style="height:90px"></i><i style="height:100px"></i>
+        </div>
+      </div>
+      <div class="concept-foot">Learn sorting &rsaquo;</div>
+    </div>
+
+    <div class="concept-card" onclick="location.hash='concept-bitmask'">
+      <div class="concept-head"><h3>Bitmask Concept</h3></div>
+      <div class="concept-body bg-bit">
+        <div class="bit-wrap">
+          <div class="and-label">AND</div>
+          <div class="bit-grid">
+            <span>1</span><span>0</span><span>1</span><span>1</span>
+            <span>0</span><span>1</span><span>0</span><span>0</span>
+            <span>0</span><span>0</span><span>0</span><span>0</span>
+          </div>
+        </div>
+      </div>
+      <div class="concept-foot">Learn bitmask &rsaquo;</div>
+    </div>
+
+    <div class="concept-card" onclick="location.hash='concept-linkedlist'">
+      <div class="concept-head"><h3>Linked List Concept</h3></div>
+      <div class="concept-body bg-ll">
+        <div class="ll-wrap">
+          <span class="ll-head">H</span>
+          <div class="ll-node"><div>5</div><div>•</div></div>
+          <div class="ll-arrow"></div>
+          <div class="ll-node"><div>9</div><div>•</div></div>
+          <div class="ll-arrow"></div>
+          <div class="ll-node"><div>2</div><div>x</div></div>
+        </div>
+      </div>
+      <div class="concept-foot">Learn linked lists &rsaquo;</div>
+    </div>
+
+    <div class="concept-card" onclick="location.hash='concept-unionfind'">
+      <div class="concept-head"><h3>Union Find DS</h3></div>
+      <div class="concept-body bg-uf">
+        <div class="uf-wrap">
+          <div class="uf-set"><div class="leaf">2</div><div class="uf-line"></div><div class="root">0</div><div class="uf-line"></div><div class="leaf">1</div></div>
+          <div class="uf-set"><div class="leaf">4</div><div class="uf-line"></div><div class="root">3</div></div>
+        </div>
+      </div>
+      <div class="concept-foot">Learn Union Find &rsaquo;</div>
+    </div>
+
+    <div class="concept-card" onclick="location.hash='concept-fenwick'">
+      <div class="concept-head"><h3>Fenwick Tree</h3></div>
+      <div class="concept-body bg-fen">
+        <div class="fen-wrap">
+          <div class="fen-bars">
+            <i style="height:10px"></i><i style="height:20px"></i><i style="height:14px"></i>
+            <i style="height:28px"></i><i style="height:8px"></i><i style="height:22px"></i><i style="height:16px"></i>
+          </div>
+          <div class="fen-circles"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+        </div>
+      </div>
+      <div class="concept-foot">Learn Fenwick Tree &rsaquo;</div>
+    </div>
+
+    <div class="concept-card" onclick="location.hash='concept-segment'">
+      <div class="concept-head"><h3>Segment Tree</h3></div>
+      <div class="concept-body bg-seg">
+        <div class="seg-wrap">
+          <span>[0,0], 0</span><span>[1,1], 1</span><span>[2,2], 2</span><span>[3,3], 3</span>
+          <span>[0,1], 1</span><span>[2,3], 5</span><span>[0,3], 6</span>
+        </div>
+      </div>
+      <div class="concept-foot">Learn Segment Tree &rsaquo;</div>
+    </div>
+
+    <div class="concept-card" onclick="location.hash='concept-graph'">
+      <div class="concept-head"><h3>Graph Traversal</h3></div>
+      <div class="concept-body bg-graph">
+        <svg class="graph-svg" viewBox="0 0 170 120">
+          <line x1="30" y1="20" x2="90" y2="20" stroke="#5a7a9a" stroke-width="2"/>
+          <line x1="30" y1="20" x2="30" y2="90" stroke="#5a7a9a" stroke-width="2"/>
+          <line x1="30" y1="90" x2="90" y2="90" stroke="#5a7a9a" stroke-width="2"/>
+          <line x1="90" y1="20" x2="140" y2="55" stroke="#5a7a9a" stroke-width="2"/>
+          <line x1="90" y1="90" x2="140" y2="55" stroke="#5a7a9a" stroke-width="2"/>
+          <circle cx="30" cy="20" r="10" fill="#febd69"/>
+          <circle cx="90" cy="20" r="10" fill="#fff"/>
+          <circle cx="30" cy="90" r="10" fill="#fff"/>
+          <circle cx="90" cy="90" r="10" fill="#fff"/>
+          <circle cx="140" cy="55" r="10" fill="#fff"/>
+        </svg>
+      </div>
+      <div class="concept-foot">Learn Graph Traversal &rsaquo;</div>
+    </div>
+
+    <div class="concept-card" onclick="location.hash='concept-stack'">
+      <div class="concept-head"><h3>Stack Concept</h3></div>
+      <div class="concept-body bg-stack">
+        <div class="stack-wrap">
+          <div class="stack-label">Push / Pop &rarr;</div>
+          <div class="stack-boxes"><span>C</span><span>B</span><span>A</span></div>
+        </div>
+      </div>
+      <div class="concept-foot">Learn Stack &rsaquo;</div>
+    </div>
+
+    <div class="concept-card" onclick="location.hash='concept-queue'">
+      <div class="concept-head"><h3>Queue Concept</h3></div>
+      <div class="concept-body bg-queue">
+        <div class="queue-wrap">
+          <div class="queue-boxes"><span>A</span><span>B</span><span>C</span><span>D</span></div>
+          <div class="queue-labels"><span>Front</span><span>Rear</span></div>
+        </div>
+      </div>
+      <div class="concept-foot">Learn Queue &rsaquo;</div>
+    </div>
+
+    <div class="concept-card" onclick="location.hash='concept-bst'">
+      <div class="concept-head"><h3>Binary Search Tree</h3></div>
+      <div class="concept-body bg-bst">
+        <svg class="bst-svg" viewBox="0 0 170 120">
+          <line x1="85" y1="20" x2="45" y2="60" stroke="#8fbf9a" stroke-width="2"/>
+          <line x1="85" y1="20" x2="125" y2="60" stroke="#8fbf9a" stroke-width="2"/>
+          <line x1="45" y1="60" x2="25" y2="98" stroke="#8fbf9a" stroke-width="2"/>
+          <line x1="45" y1="60" x2="65" y2="98" stroke="#8fbf9a" stroke-width="2"/>
+          <line x1="125" y1="60" x2="145" y2="98" stroke="#8fbf9a" stroke-width="2"/>
+          <circle cx="85" cy="20" r="12" fill="#febd69"/>
+          <circle cx="45" cy="60" r="12" fill="#fff"/>
+          <circle cx="125" cy="60" r="12" fill="#fff"/>
+          <circle cx="25" cy="98" r="12" fill="#fff"/>
+          <circle cx="65" cy="98" r="12" fill="#fff"/>
+          <circle cx="145" cy="98" r="12" fill="#fff"/>
+        </svg>
+      </div>
+      <div class="concept-foot">Learn Binary Search Tree &rsaquo;</div>
+    </div>
+
+  </div>
+
+  <div class="section-sep"><b onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to top</b></div>
+  <div class="break-banner">If you are tired, take some break and <a class="play-highlight" href="#tictactoe" onclick="showView('tictactoe')">🎮 play with us</a></div>
+</div>
+</section>
+
+
+<section class="view" id="view-javascript" style="--lang-accent:#f0c419">
+<div class="lang-hero">
+  <h1><span class="accent">JavaScript</span> Courses</h1>
+  <p>Learn data structures and algorithms with hands-on JavaScript examples — from the fundamentals to advanced problem solving.</p>
+</div>
+
+<div class="course-wrap">
+  <div class="course-grid">
+    <div class="course-card" onclick="location.hash='course-js-fundamentals'">
+      <div class="course-body">Basics</div>
+      <div class="course-info"><h3>JavaScript Fundamentals</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-js-ds'">
+      <div class="course-body">Data Structures</div>
+      <div class="course-info"><h3>Data Structures in JavaScript</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-js-algorithms'">
+      <div class="course-body">Algorithms</div>
+      <div class="course-info"><h3>Algorithms in JavaScript</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-js-practice'">
+      <div class="course-body">Practice</div>
+      <div class="course-info"><h3>JavaScript Practice Problems</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-js-interview'">
+      <div class="course-body">Interview Prep</div>
+      <div class="course-info"><h3>JavaScript Interview Prep</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-js-projects'">
+      <div class="course-body">Projects</div>
+      <div class="course-info"><h3>JavaScript Mini Projects</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="view" id="view-python" style="--lang-accent:#4b8bbe">
+<div class="lang-hero">
+  <h1><span class="accent">Python</span> Courses</h1>
+  <p>Learn data structures and algorithms with hands-on Python examples — from the fundamentals to advanced problem solving.</p>
+</div>
+
+<div class="course-wrap">
+  <div class="course-grid">
+    <div class="course-card" onclick="location.hash='course-py-fundamentals'">
+      <div class="course-body">Basics</div>
+      <div class="course-info"><h3>Python Fundamentals</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-py-ds'">
+      <div class="course-body">Data Structures</div>
+      <div class="course-info"><h3>Data Structures in Python</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-py-algorithms'">
+      <div class="course-body">Algorithms</div>
+      <div class="course-info"><h3>Algorithms in Python</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-py-practice'">
+      <div class="course-body">Practice</div>
+      <div class="course-info"><h3>Python Practice Problems</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-py-interview'">
+      <div class="course-body">Interview Prep</div>
+      <div class="course-info"><h3>Python Interview Prep</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-py-projects'">
+      <div class="course-body">Projects</div>
+      <div class="course-info"><h3>Python Mini Projects</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="view" id="view-java" style="--lang-accent:#e76f51">
+<div class="lang-hero">
+  <h1><span class="accent">Java</span> Courses</h1>
+  <p>Learn data structures and algorithms with hands-on Java examples — from the fundamentals to advanced problem solving.</p>
+</div>
+
+<div class="course-wrap">
+  <div class="course-grid">
+    <div class="course-card" onclick="location.hash='course-java-fundamentals'">
+      <div class="course-body">Basics</div>
+      <div class="course-info"><h3>Java Fundamentals</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-java-ds'">
+      <div class="course-body">Data Structures</div>
+      <div class="course-info"><h3>Data Structures in Java</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-java-algorithms'">
+      <div class="course-body">Algorithms</div>
+      <div class="course-info"><h3>Algorithms in Java</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-java-practice'">
+      <div class="course-body">Practice</div>
+      <div class="course-info"><h3>Java Practice Problems</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-java-interview'">
+      <div class="course-body">Interview Prep</div>
+      <div class="course-info"><h3>Java Interview Prep</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-java-projects'">
+      <div class="course-body">Projects</div>
+      <div class="course-info"><h3>Java Mini Projects</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="view" id="view-cpp" style="--lang-accent:#5b7fd6">
+<div class="lang-hero">
+  <h1><span class="accent">C++</span> Courses</h1>
+  <p>Learn data structures and algorithms with hands-on C++ examples — from the fundamentals to advanced problem solving.</p>
+</div>
+
+<div class="course-wrap">
+  <div class="course-grid">
+    <div class="course-card" onclick="location.hash='course-cpp-fundamentals'">
+      <div class="course-body">Basics</div>
+      <div class="course-info"><h3>C++ Fundamentals</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-cpp-ds'">
+      <div class="course-body">Data Structures</div>
+      <div class="course-info"><h3>Data Structures in C++</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-cpp-algorithms'">
+      <div class="course-body">Algorithms</div>
+      <div class="course-info"><h3>Algorithms in C++</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-cpp-practice'">
+      <div class="course-body">Practice</div>
+      <div class="course-info"><h3>C++ Practice Problems</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-cpp-interview'">
+      <div class="course-body">Interview Prep</div>
+      <div class="course-info"><h3>C++ Interview Prep</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-cpp-projects'">
+      <div class="course-body">Projects</div>
+      <div class="course-info"><h3>C++ Mini Projects</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="view" id="view-csharp" style="--lang-accent:#7b4fa6">
+<div class="lang-hero">
+  <h1><span class="accent">C#</span> Courses</h1>
+  <p>Learn data structures and algorithms with hands-on C# examples — from the fundamentals to advanced problem solving.</p>
+</div>
+
+<div class="course-wrap">
+  <div class="course-grid">
+    <div class="course-card" onclick="location.hash='course-cs-fundamentals'">
+      <div class="course-body">Basics</div>
+      <div class="course-info"><h3>C# Fundamentals</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-cs-ds'">
+      <div class="course-body">Data Structures</div>
+      <div class="course-info"><h3>Data Structures in C#</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-cs-algorithms'">
+      <div class="course-body">Algorithms</div>
+      <div class="course-info"><h3>Algorithms in C#</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-cs-practice'">
+      <div class="course-body">Practice</div>
+      <div class="course-info"><h3>C# Practice Problems</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-cs-interview'">
+      <div class="course-body">Interview Prep</div>
+      <div class="course-info"><h3>C# Interview Prep</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+    <div class="course-card" onclick="location.hash='course-cs-projects'">
+      <div class="course-body">Projects</div>
+      <div class="course-info"><h3>C# Mini Projects</h3><span>Start learning &rsaquo;</span></div>
+    </div>
+  </div>
+</div>
+</section>
+
+
+<section class="view" id="view-concept-array" style="--lang-accent:#3fa66d">
+  <div class="lang-hero">
+    <h1><span class="accent">Array</span></h1>
+    <p>A collection of elements stored at contiguous memory locations, accessed instantly by index.</p>
+  </div>
+  <div class="concept-detail">
+    <p>An array is one of the very first data structures most programmers learn, and for good reason: because its elements sit next to each other in memory, the computer can jump straight to any position using simple arithmetic instead of walking through the whole collection. That's what makes reading arr[5] just as fast whether the array has 10 elements or 10 million.</p>
+    <p>The trade-off shows up when the array needs to grow or shrink. Because the memory block is contiguous, inserting or removing an item in the middle means shifting every element after it, and if the array runs out of room, the whole thing may need to be copied into a bigger block elsewhere. Understanding this trade-off — instant access versus costly resizing — is the foundation for reasoning about almost every other data structure that follows.</p>
+    <h2>Watch: Learn Visually</h2>
+    <div class="video-embed">
+      <iframe src="https://www.youtube.com/embed/RBSGKlAvoiM?start=1020" title="array video" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=RBSGKlAvoiM&t=1020s" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
+
+    <h2>Common Operations</h2>
+    <ul>
+      <li>Access an element by index</li>
+      <li>Insert an element at the end or a given position</li>
+      <li>Delete an element and shift remaining items</li>
+      <li>Search for a value (linear or binary search)</li>
+    </ul>
+    <h2>Time Complexity</h2>
+    <table>
+      <tr><th>Operation</th><th>Complexity</th></tr>
+        <tr><td>Access</td><td>O(1)</td></tr>
+        <tr><td>Search</td><td>O(n)</td></tr>
+        <tr><td>Insert / Delete</td><td>O(n)</td></tr>
+    </table>
+    <a class="back-link" onclick="location.hash='home';setTimeout(()=>document.getElementById('grid').scrollIntoView({behavior:'smooth'}),0)">&larr; Back to all concepts</a>
+  </div>
+</section>
+
+<section class="view" id="view-concept-sorting" style="--lang-accent:#3fa66d">
+  <div class="lang-hero">
+    <h1><span class="accent">Sorting</span></h1>
+    <p>Arranging elements in a defined order — ascending or descending — using algorithms such as quicksort, mergesort, or bubble sort.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Sorting shows up almost everywhere in software — from ranking search results to preparing data for binary search — so it's usually the first place students see the trade-off between simplicity and performance. Simple algorithms like bubble sort or insertion sort are easy to write and reason about, but their O(n²) behavior makes them impractical once a dataset grows large.</p>
+    <p>Divide-and-conquer algorithms like merge sort and quicksort solve this by breaking the problem into smaller pieces, sorting those, and combining the results, bringing the average time down to O(n log n). Learning how and why these algorithms work is one of the best ways to build intuition for recursion and algorithmic complexity in general.</p>
+    <h2>Watch: Learn Visually</h2>
+    <div class="video-embed">
+      <iframe src="https://www.youtube.com/embed/gcRUIO-8r3U" title="sorting video" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=gcRUIO-8r3U" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
+
+    <h2>Common Operations</h2>
+    <ul>
+      <li>Compare adjacent or partitioned elements</li>
+      <li>Swap or merge elements into correct order</li>
+      <li>Repeat until the whole collection is sorted</li>
+    </ul>
+    <h2>Time Complexity</h2>
+    <table>
+      <tr><th>Operation</th><th>Complexity</th></tr>
+        <tr><td>Bubble Sort</td><td>O(n²)</td></tr>
+        <tr><td>Merge Sort</td><td>O(n log n)</td></tr>
+        <tr><td>Quick Sort</td><td>O(n log n) avg</td></tr>
+    </table>
+    <a class="back-link" onclick="location.hash='home';setTimeout(()=>document.getElementById('grid').scrollIntoView({behavior:'smooth'}),0)">&larr; Back to all concepts</a>
+  </div>
+</section>
+
+<section class="view" id="view-concept-bitmask" style="--lang-accent:#c3d92e">
+  <div class="lang-hero">
+    <h1><span class="accent">Bitmask</span></h1>
+    <p>Using the bits of a number to represent and manipulate sets of flags efficiently with AND, OR, XOR, and shift operations.</p>
+  </div>
+  <div class="concept-detail">
+    <p>A bitmask uses the individual bits inside an integer to represent a set of true/false flags — instead of eleven separate boolean variables, you can pack eleven flags into a single number and manipulate all of them at once with bitwise operators.</p>
+    <p>This technique is a favorite in competitive programming because operations like AND, OR, and XOR run in constant time directly on the CPU, making bitmasks a compact and extremely fast way to represent subsets, track visited states, or encode configuration flags.</p>
+    <h2>Watch: Learn Visually</h2>
+    <div class="video-embed">
+      <iframe src="https://www.youtube.com/embed/0j0TF_u4FYw" title="bitmask video" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=0j0TF_u4FYw" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
+
+    <h2>Common Operations</h2>
+    <ul>
+      <li>Set a bit: n | (1 << k)</li>
+      <li>Clear a bit: n & ~(1 << k)</li>
+      <li>Toggle a bit: n ^ (1 << k)</li>
+      <li>Check a bit: (n >> k) & 1</li>
+    </ul>
+    <h2>Time Complexity</h2>
+    <table>
+      <tr><th>Operation</th><th>Complexity</th></tr>
+        <tr><td>Set / Clear / Toggle</td><td>O(1)</td></tr>
+        <tr><td>Check bit</td><td>O(1)</td></tr>
+    </table>
+    <a class="back-link" onclick="location.hash='home';setTimeout(()=>document.getElementById('grid').scrollIntoView({behavior:'smooth'}),0)">&larr; Back to all concepts</a>
+  </div>
+</section>
+
+<section class="view" id="view-concept-linkedlist" style="--lang-accent:#4a55a2">
+  <div class="lang-hero">
+    <h1><span class="accent">Linked List</span></h1>
+    <p>A sequence of nodes where each node stores data and a pointer to the next node, allowing efficient insertion and deletion.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Where an array keeps its elements in one contiguous block, a linked list scatters its nodes across memory and connects them with pointers. That difference is the whole story: a linked list can grow or shrink without ever needing to copy or shift existing data, since inserting a node is just a matter of relinking a couple of pointers.</p>
+    <p>The cost is that you lose instant indexed access — to reach the 100th node you have to walk through the 99 before it. This makes linked lists a great fit for situations with frequent insertions and deletions and a poor fit when you need fast random access.</p>
+    <h2>Watch: Learn Visually</h2>
+    <div class="video-embed">
+      <iframe src="https://www.youtube.com/embed/RBSGKlAvoiM?start=2103" title="linkedlist video" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=RBSGKlAvoiM&t=2103s" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
+
+    <h2>Common Operations</h2>
+    <ul>
+      <li>Traverse from head to tail following pointers</li>
+      <li>Insert a node by relinking pointers</li>
+      <li>Delete a node by skipping it in the chain</li>
+      <li>Search by walking the list</li>
+    </ul>
+    <h2>Time Complexity</h2>
+    <table>
+      <tr><th>Operation</th><th>Complexity</th></tr>
+        <tr><td>Access</td><td>O(n)</td></tr>
+        <tr><td>Search</td><td>O(n)</td></tr>
+        <tr><td>Insert / Delete at head</td><td>O(1)</td></tr>
+    </table>
+    <a class="back-link" onclick="location.hash='home';setTimeout(()=>document.getElementById('grid').scrollIntoView({behavior:'smooth'}),0)">&larr; Back to all concepts</a>
+  </div>
+</section>
+
+<section class="view" id="view-concept-unionfind" style="--lang-accent:#f0952c">
+  <div class="lang-hero">
+    <h1><span class="accent">Union Find</span></h1>
+    <p>A structure that tracks a set of elements split into disjoint groups, supporting fast union and find operations, often with path compression.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Union Find (also called Disjoint Set) answers a deceptively simple question extremely efficiently: are these two elements in the same group? It represents a collection of items split into non-overlapping sets, and supports merging two sets together and checking which set an item belongs to.</p>
+    <p>With two small optimizations — union by size/rank and path compression — both operations run in almost constant time, which is why Union Find is the backbone of algorithms like Kruskal's minimum spanning tree and is widely used to detect cycles or track connectivity in a graph.</p>
+    <h2>Watch: Learn Visually</h2>
+    <div class="video-embed">
+      <iframe src="https://www.youtube.com/embed/RBSGKlAvoiM?start=8906" title="unionfind video" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=RBSGKlAvoiM&t=8906s" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
+
+    <h2>Common Operations</h2>
+    <ul>
+      <li>Find: locate the root/representative of a set</li>
+      <li>Union: merge two sets together</li>
+      <li>Path compression speeds up future finds</li>
+    </ul>
+    <h2>Time Complexity</h2>
+    <table>
+      <tr><th>Operation</th><th>Complexity</th></tr>
+        <tr><td>Find</td><td>~O(1) amortized</td></tr>
+        <tr><td>Union</td><td>~O(1) amortized</td></tr>
+    </table>
+    <a class="back-link" onclick="location.hash='home';setTimeout(()=>document.getElementById('grid').scrollIntoView({behavior:'smooth'}),0)">&larr; Back to all concepts</a>
+  </div>
+</section>
+
+<section class="view" id="view-concept-fenwick" style="--lang-accent:#e8792c">
+  <div class="lang-hero">
+    <h1><span class="accent">Fenwick Tree</span></h1>
+    <p>A Binary Indexed Tree that allows fast prefix-sum queries and point updates, using far less memory than a full segment tree.</p>
+  </div>
+  <div class="concept-detail">
+    <p>A Fenwick Tree, or Binary Indexed Tree, solves a common problem: repeatedly updating values in an array while also asking for the running sum of a range. A naive approach recalculates the sum every time, which gets slow fast — a Fenwick Tree instead keeps partial sums organized so that both updates and prefix-sum queries only take O(log n) time.</p>
+    <p>What makes it especially elegant is how compact it is: the structure is stored in a single array, using each number's lowest set bit to decide which other indices it's responsible for, giving segment-tree-like performance with far less code and memory overhead.</p>
+    <h2>Watch: Learn Visually</h2>
+    <div class="video-embed">
+      <iframe src="https://www.youtube.com/embed/RBSGKlAvoiM?start=20736" title="fenwick video" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=RBSGKlAvoiM&t=20736s" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
+
+    <h2>Common Operations</h2>
+    <ul>
+      <li>Update: add a value at an index</li>
+      <li>Query: get the prefix sum up to an index</li>
+      <li>Uses the lowest set bit to jump between indices</li>
+    </ul>
+    <h2>Time Complexity</h2>
+    <table>
+      <tr><th>Operation</th><th>Complexity</th></tr>
+        <tr><td>Update</td><td>O(log n)</td></tr>
+        <tr><td>Prefix Sum Query</td><td>O(log n)</td></tr>
+    </table>
+    <a class="back-link" onclick="location.hash='home';setTimeout(()=>document.getElementById('grid').scrollIntoView({behavior:'smooth'}),0)">&larr; Back to all concepts</a>
+  </div>
+</section>
+
+<section class="view" id="view-concept-segment" style="--lang-accent:#f6c453">
+  <div class="lang-hero">
+    <h1><span class="accent">Segment Tree</span></h1>
+    <p>A tree structure for storing information about intervals, enabling fast range queries (sum, min, max) and range updates.</p>
+  </div>
+  <div class="concept-detail">
+    <p>A Segment Tree is built for range questions — the sum, minimum, or maximum of any slice of an array — and it answers them in O(log n) time no matter how large the range is. It works by recursively splitting the array in half, with each tree node storing the combined result for its slice, so a query only has to touch a handful of nodes instead of the whole range.</p>
+    <p>Unlike a Fenwick Tree, a Segment Tree isn't limited to sums — it can be adapted to any operation that combines two ranges, including min, max, GCD, or more complex custom operations, which makes it one of the most flexible tools for range-query problems.</p>
+    <h2>Watch: Learn Visually</h2>
+    <div class="video-embed">
+      <iframe src="https://www.youtube.com/embed/ZBHKZF5w4YU" title="segment video" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=ZBHKZF5w4YU" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
+
+    <h2>Common Operations</h2>
+    <ul>
+      <li>Build the tree over the array once</li>
+      <li>Query: combine results over a range</li>
+      <li>Update: change a value and propagate up the tree</li>
+    </ul>
+    <h2>Time Complexity</h2>
+    <table>
+      <tr><th>Operation</th><th>Complexity</th></tr>
+        <tr><td>Build</td><td>O(n)</td></tr>
+        <tr><td>Range Query</td><td>O(log n)</td></tr>
+        <tr><td>Point Update</td><td>O(log n)</td></tr>
+    </table>
+    <a class="back-link" onclick="location.hash='home';setTimeout(()=>document.getElementById('grid').scrollIntoView({behavior:'smooth'}),0)">&larr; Back to all concepts</a>
+  </div>
+</section>
+
+<section class="view" id="view-concept-graph" style="--lang-accent:#16202e">
+  <div class="lang-hero">
+    <h1><span class="accent">Graph Traversal</span></h1>
+    <p>Visiting all nodes of a graph using strategies like Breadth-First Search (BFS) or Depth-First Search (DFS) to explore connections.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Graphs model relationships — roads between cities, friendships in a social network, dependencies between tasks — and traversal algorithms are how you systematically explore those relationships. Breadth-First Search (BFS) explores level by level using a queue, which makes it the natural choice for finding the shortest path in an unweighted graph.</p>
+    <p>Depth-First Search (DFS) instead dives as deep as possible before backtracking, typically using recursion or a stack, and is well suited to problems like detecting cycles or exploring all possible paths. Both run in O(V + E) time and form the foundation for more advanced graph algorithms like Dijkstra's and topological sorting.</p>
+    <h2>Watch: Learn Visually</h2>
+    <div class="video-embed">
+      <iframe src="https://www.youtube.com/embed/D8ZS32wGs0s" title="graph video" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=D8ZS32wGs0s" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
+
+    <h2>Common Operations</h2>
+    <ul>
+      <li>BFS: explore level by level using a queue</li>
+      <li>DFS: explore as deep as possible using recursion or a stack</li>
+      <li>Track visited nodes to avoid revisiting</li>
+    </ul>
+    <h2>Time Complexity</h2>
+    <table>
+      <tr><th>Operation</th><th>Complexity</th></tr>
+        <tr><td>BFS / DFS</td><td>O(V + E)</td></tr>
+    </table>
+    <a class="back-link" onclick="location.hash='home';setTimeout(()=>document.getElementById('grid').scrollIntoView({behavior:'smooth'}),0)">&larr; Back to all concepts</a>
+  </div>
+</section>
+
+<section class="view" id="view-concept-stack" style="--lang-accent:#7b4fa6">
+  <div class="lang-hero">
+    <h1><span class="accent">Stack</span></h1>
+    <p>A Last-In-First-Out (LIFO) structure where the last element pushed on is the first one popped off.</p>
+  </div>
+  <div class="concept-detail">
+    <p>A stack follows a simple rule: Last In, First Out. Whatever was added most recently is the first thing to come back out — think of a stack of plates, where you only ever add or remove from the top.</p>
+    <p>That simplicity makes stacks perfect for tracking state that needs to be undone in reverse order: function call stacks, undo history in an editor, matching parentheses, and depth-first traversal all rely on this LIFO behavior, and every core operation — push, pop, peek — runs in constant time.</p>
+    <h2>Watch: Learn Visually</h2>
+    <div class="video-embed">
+      <iframe src="https://www.youtube.com/embed/RBSGKlAvoiM?start=3506" title="stack video" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=RBSGKlAvoiM&t=3506s" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
+
+    <h2>Common Operations</h2>
+    <ul>
+      <li>Push: add an element to the top</li>
+      <li>Pop: remove the top element</li>
+      <li>Peek: view the top element without removing it</li>
+    </ul>
+    <h2>Time Complexity</h2>
+    <table>
+      <tr><th>Operation</th><th>Complexity</th></tr>
+        <tr><td>Push</td><td>O(1)</td></tr>
+        <tr><td>Pop</td><td>O(1)</td></tr>
+        <tr><td>Peek</td><td>O(1)</td></tr>
+    </table>
+    <a class="back-link" onclick="location.hash='home';setTimeout(()=>document.getElementById('grid').scrollIntoView({behavior:'smooth'}),0)">&larr; Back to all concepts</a>
+  </div>
+</section>
+
+<section class="view" id="view-concept-queue" style="--lang-accent:#1f8a8a">
+  <div class="lang-hero">
+    <h1><span class="accent">Queue</span></h1>
+    <p>A First-In-First-Out (FIFO) structure where elements are added at the rear and removed from the front.</p>
+  </div>
+  <div class="concept-detail">
+    <p>A queue flips the stack's rule around: First In, First Out. The first element added is the first one removed, just like a line of people waiting — new arrivals join at the rear and only the person at the front gets served next.</p>
+    <p>This ordering makes queues the natural structure for anything that needs fair, in-order processing — task scheduling, printer queues, and breadth-first search all depend on a queue to make sure nothing jumps ahead of the line.</p>
+    <h2>Watch: Learn Visually</h2>
+    <div class="video-embed">
+      <iframe src="https://www.youtube.com/embed/RBSGKlAvoiM?start=4558" title="queue video" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=RBSGKlAvoiM&t=4558s" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
+
+    <h2>Common Operations</h2>
+    <ul>
+      <li>Enqueue: add an element to the rear</li>
+      <li>Dequeue: remove an element from the front</li>
+      <li>Peek: view the front element</li>
+    </ul>
+    <h2>Time Complexity</h2>
+    <table>
+      <tr><th>Operation</th><th>Complexity</th></tr>
+        <tr><td>Enqueue</td><td>O(1)</td></tr>
+        <tr><td>Dequeue</td><td>O(1)</td></tr>
+        <tr><td>Peek</td><td>O(1)</td></tr>
+    </table>
+    <a class="back-link" onclick="location.hash='home';setTimeout(()=>document.getElementById('grid').scrollIntoView({behavior:'smooth'}),0)">&larr; Back to all concepts</a>
+  </div>
+</section>
+
+<section class="view" id="view-concept-bst" style="--lang-accent:#2e4d33">
+  <div class="lang-hero">
+    <h1><span class="accent">Binary Search Tree</span></h1>
+    <p>A tree where each node's left subtree holds smaller values and its right subtree holds larger values, enabling fast lookups.</p>
+  </div>
+  <div class="concept-detail">
+    <p>A Binary Search Tree keeps its values organized using a simple invariant: for every node, everything in its left subtree is smaller, and everything in its right subtree is larger. That single rule is what allows searching, inserting, and deleting to skip half the remaining tree at each step, similar to how binary search works on a sorted array.</p>
+    <p>On a balanced tree, this gives O(log n) performance for all three operations, but an unlucky sequence of insertions can leave the tree lopsided and degrade performance to O(n) — which is exactly the problem that self-balancing trees like AVL and Red-Black trees are designed to solve.</p>
+    <h2>Watch: Learn Visually</h2>
+    <div class="video-embed">
+      <iframe src="https://www.youtube.com/embed/RBSGKlAvoiM?start=10974" title="bst video" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <a class="video-link" href="https://www.youtube.com/watch?v=RBSGKlAvoiM&t=10974s" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
+
+    <h2>Common Operations</h2>
+    <ul>
+      <li>Insert: place a new value in the correct position</li>
+      <li>Search: compare and move left or right until found</li>
+      <li>Delete: remove a node and re-balance the tree structure</li>
+    </ul>
+    <h2>Time Complexity</h2>
+    <table>
+      <tr><th>Operation</th><th>Complexity</th></tr>
+        <tr><td>Search / Insert / Delete</td><td>O(log n) avg, O(n) worst</td></tr>
+    </table>
+    <a class="back-link" onclick="location.hash='home';setTimeout(()=>document.getElementById('grid').scrollIntoView({behavior:'smooth'}),0)">&larr; Back to all concepts</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-js-fundamentals" style="--lang-accent:#f0c419">
+  <div class="lang-hero">
+    <h1><span class="accent">JavaScript Fundamentals</span></h1>
+    <p>The essential syntax and building blocks every JavaScript developer needs before tackling data structures and algorithms.</p>
+  </div>
+  <div class="concept-detail">
+    <p>This course starts from zero, covering let and const, core data types, and the operators used to work with them. From there it moves into control flow — conditionals and loops — and function declarations and arrow functions, the two tools you'll use to structure logic in almost every program you write.</p>
+    <p>Along the way you'll get comfortable with arrays and objects for grouping data, basic input and output, and reading error messages well enough to debug your own code using the browser console or Node.js. By the end, you'll be able to read and write straightforward JavaScript programs confidently, which is the springboard for every other course in this track.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Variables, data types, and operators</li>
+      <li>Conditionals and loops for control flow</li>
+      <li>Writing and calling your own functions</li>
+      <li>Working with arrays and objects</li>
+      <li>Basic debugging and reading error output</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Syntax, variables, and data types</li>
+      <li>Module 2: Operators and control flow</li>
+      <li>Module 3: Functions and scope</li>
+      <li>Module 4: Working with arrays and objects</li>
+      <li>Module 5: Debugging and small practice exercises</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('javascript')">&larr; Back to JavaScript Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-js-ds" style="--lang-accent:#f0c419">
+  <div class="lang-hero">
+    <h1><span class="accent">Data Structures in JavaScript</span></h1>
+    <p>Build and use the core data structures — arrays, lists, stacks, queues, hash maps, trees, and graphs — in JavaScript.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Once you know the basics of the language, the next step is understanding how data is organized in memory and why that organization matters. This course walks through arrays and linked lists, then stacks and queues, showing how each one is implemented using arrays and objects as well as built from scratch so you understand what's happening under the hood.</p>
+    <p>From there it moves into hash-based structures like Map for fast lookups, and finishes with trees and graphs, the two structures behind most real-world systems that model hierarchies or networks. Every structure is paired with the operations it supports, so you leave knowing not just how to build each one but when to reach for it.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Arrays and linked lists, and the trade-offs between them</li>
+      <li>Stacks and queues, and the problems they naturally solve</li>
+      <li>Hash maps for fast key-based lookups</li>
+      <li>Binary trees and binary search trees</li>
+      <li>Graph representations and basic traversal</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Arrays and linked lists</li>
+      <li>Module 2: Stacks and queues</li>
+      <li>Module 3: Hash maps and sets</li>
+      <li>Module 4: Trees and binary search trees</li>
+      <li>Module 5: Graphs and traversal basics</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('javascript')">&larr; Back to JavaScript Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-js-algorithms" style="--lang-accent:#f0c419">
+  <div class="lang-hero">
+    <h1><span class="accent">Algorithms in JavaScript</span></h1>
+    <p>Core algorithmic techniques — sorting, searching, recursion, and dynamic programming — implemented and analyzed in JavaScript.</p>
+  </div>
+  <div class="concept-detail">
+    <p>This course is about developing algorithmic thinking, not just memorizing code. You'll implement classic sorting algorithms like bubble sort, merge sort, and quicksort in JavaScript, then compare their behavior directly so the trade-off between simplicity and performance becomes concrete rather than theoretical.</p>
+    <p>From there the course covers searching (linear and binary), recursion and how to reason about it, and finally greedy algorithms and dynamic programming — the techniques most commonly asked about in technical interviews. Every algorithm is paired with a time and space complexity discussion, so you build the habit of asking "how does this scale?" for anything you write.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Sorting algorithms and their trade-offs</li>
+      <li>Linear and binary search</li>
+      <li>Recursion and how to trace it</li>
+      <li>Greedy algorithms</li>
+      <li>Introductory dynamic programming</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Sorting algorithms</li>
+      <li>Module 2: Searching techniques</li>
+      <li>Module 3: Recursion</li>
+      <li>Module 4: Greedy algorithms</li>
+      <li>Module 5: Dynamic programming basics</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('javascript')">&larr; Back to JavaScript Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-js-practice" style="--lang-accent:#f0c419">
+  <div class="lang-hero">
+    <h1><span class="accent">JavaScript Practice Problems</span></h1>
+    <p>A curated set of coding challenges that reinforce data structures and algorithms concepts through repeated practice in JavaScript.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Reading about a data structure and actually using one under time pressure are very different skills, and this course is built to close that gap. Problems are grouped by topic — arrays, strings, trees, graphs, dynamic programming — so you can drill a specific weak spot instead of jumping randomly between unrelated challenges.</p>
+    <p>Each problem set starts at a beginner-friendly difficulty and ramps up gradually, with solutions written idiomatically in JavaScript so you also pick up good habits and common patterns along the way, not just a working answer. It's designed to be worked through repeatedly using the browser console or Node.js as your practice environment.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Recognizing common problem patterns</li>
+      <li>Translating a problem statement into a working solution</li>
+      <li>Writing idiomatic, readable JavaScript code under time pressure</li>
+      <li>Testing and debugging your own solutions quickly</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Array and string problems</li>
+      <li>Module 2: Linked list and stack/queue problems</li>
+      <li>Module 3: Tree and graph problems</li>
+      <li>Module 4: Dynamic programming problems</li>
+      <li>Module 5: Mixed timed practice sets</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('javascript')">&larr; Back to JavaScript Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-js-interview" style="--lang-accent:#f0c419">
+  <div class="lang-hero">
+    <h1><span class="accent">JavaScript Interview Prep</span></h1>
+    <p>Commonly asked technical interview questions and JavaScript-specific concepts, with guidance on explaining your thinking clearly.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Technical interviews test more than whether you can solve a problem — they test whether you can explain your reasoning clearly while doing it. This course walks through the most frequently asked data structure and algorithm questions, with a strong focus on articulating your approach out loud before writing any code.</p>
+    <p>It also covers JavaScript-specific talking points that interviewers commonly probe, including closures, hoisting, and how this behaves in different contexts, since many interviews mix general algorithm questions with language-specific ones. You'll finish with a set of mock interview walkthroughs modeled on real whiteboard-style sessions.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>How to break down and talk through a problem before coding</li>
+      <li>Common JavaScript-specific interview questions</li>
+      <li>Closures, hoisting, and how this behaves in different contexts</li>
+      <li>How to discuss time and space complexity confidently</li>
+      <li>Mock interview practice and feedback patterns</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Communicating your thought process</li>
+      <li>Module 2: Core data structure & algorithm questions</li>
+      <li>Module 3: JavaScript-specific concepts interviewers ask about</li>
+      <li>Module 4: Mock whiteboard-style interviews</li>
+      <li>Module 5: Behavioral + technical combined rounds</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('javascript')">&larr; Back to JavaScript Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-js-projects" style="--lang-accent:#f0c419">
+  <div class="lang-hero">
+    <h1><span class="accent">JavaScript Mini Projects</span></h1>
+    <p>Small, self-contained projects that combine multiple concepts to apply JavaScript data structures and algorithms in practice.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Courses that focus purely on concepts can leave a gap between knowing something and being able to build with it — this course closes that gap with short, complete projects. Each one is scoped to be finished in a single sitting, but still touches multiple ideas from earlier courses, like prototypes and ES6 classes and arrays and objects.</p>
+    <p>You'll build a to-do list app that saves state to localStorage, then a simple weather dashboard that fetches data from an API, both using npm where relevant for structure or dependencies. These projects are meant to go in a portfolio, so each one emphasizes clean structure and readable code as much as functionality.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Structuring a small project from scratch</li>
+      <li>Applying prototypes and ES6 classes in a real context</li>
+      <li>Working with arrays and objects in a practical setting</li>
+      <li>Basic file or data persistence</li>
+      <li>Writing project code that's clean enough to share</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Planning and structuring a small project</li>
+      <li>Module 2: Building a to-do list app that saves state to localStorage</li>
+      <li>Module 3: Building a simple weather dashboard that fetches data from an API</li>
+      <li>Module 4: Polishing, testing, and documenting your work</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('javascript')">&larr; Back to JavaScript Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-py-fundamentals" style="--lang-accent:#4b8bbe">
+  <div class="lang-hero">
+    <h1><span class="accent">Python Fundamentals</span></h1>
+    <p>The essential syntax and building blocks every Python developer needs before tackling data structures and algorithms.</p>
+  </div>
+  <div class="concept-detail">
+    <p>This course starts from zero, covering dynamically typed variables, core data types, and the operators used to work with them. From there it moves into control flow — conditionals and loops — and def functions and lambda expressions, the two tools you'll use to structure logic in almost every program you write.</p>
+    <p>Along the way you'll get comfortable with lists, tuples, and dictionaries for grouping data, basic input and output, and reading error messages well enough to debug your own code using the interactive REPL or a Jupyter notebook. By the end, you'll be able to read and write straightforward Python programs confidently, which is the springboard for every other course in this track.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Variables, data types, and operators</li>
+      <li>Conditionals and loops for control flow</li>
+      <li>Writing and calling your own functions</li>
+      <li>Working with lists, tuples, and dictionaries</li>
+      <li>Basic debugging and reading error output</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Syntax, variables, and data types</li>
+      <li>Module 2: Operators and control flow</li>
+      <li>Module 3: Functions and scope</li>
+      <li>Module 4: Working with lists, tuples, and dictionaries</li>
+      <li>Module 5: Debugging and small practice exercises</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('python')">&larr; Back to Python Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-py-ds" style="--lang-accent:#4b8bbe">
+  <div class="lang-hero">
+    <h1><span class="accent">Data Structures in Python</span></h1>
+    <p>Build and use the core data structures — arrays, lists, stacks, queues, hash maps, trees, and graphs — in Python.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Once you know the basics of the language, the next step is understanding how data is organized in memory and why that organization matters. This course walks through arrays and linked lists, then stacks and queues, showing how each one is implemented using lists, tuples, and dictionaries as well as built from scratch so you understand what's happening under the hood.</p>
+    <p>From there it moves into hash-based structures like dict for fast lookups, and finishes with trees and graphs, the two structures behind most real-world systems that model hierarchies or networks. Every structure is paired with the operations it supports, so you leave knowing not just how to build each one but when to reach for it.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Arrays and linked lists, and the trade-offs between them</li>
+      <li>Stacks and queues, and the problems they naturally solve</li>
+      <li>Hash maps for fast key-based lookups</li>
+      <li>Binary trees and binary search trees</li>
+      <li>Graph representations and basic traversal</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Arrays and linked lists</li>
+      <li>Module 2: Stacks and queues</li>
+      <li>Module 3: Hash maps and sets</li>
+      <li>Module 4: Trees and binary search trees</li>
+      <li>Module 5: Graphs and traversal basics</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('python')">&larr; Back to Python Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-py-algorithms" style="--lang-accent:#4b8bbe">
+  <div class="lang-hero">
+    <h1><span class="accent">Algorithms in Python</span></h1>
+    <p>Core algorithmic techniques — sorting, searching, recursion, and dynamic programming — implemented and analyzed in Python.</p>
+  </div>
+  <div class="concept-detail">
+    <p>This course is about developing algorithmic thinking, not just memorizing code. You'll implement classic sorting algorithms like bubble sort, merge sort, and quicksort in Python, then compare their behavior directly so the trade-off between simplicity and performance becomes concrete rather than theoretical.</p>
+    <p>From there the course covers searching (linear and binary), recursion and how to reason about it, and finally greedy algorithms and dynamic programming — the techniques most commonly asked about in technical interviews. Every algorithm is paired with a time and space complexity discussion, so you build the habit of asking "how does this scale?" for anything you write.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Sorting algorithms and their trade-offs</li>
+      <li>Linear and binary search</li>
+      <li>Recursion and how to trace it</li>
+      <li>Greedy algorithms</li>
+      <li>Introductory dynamic programming</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Sorting algorithms</li>
+      <li>Module 2: Searching techniques</li>
+      <li>Module 3: Recursion</li>
+      <li>Module 4: Greedy algorithms</li>
+      <li>Module 5: Dynamic programming basics</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('python')">&larr; Back to Python Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-py-practice" style="--lang-accent:#4b8bbe">
+  <div class="lang-hero">
+    <h1><span class="accent">Python Practice Problems</span></h1>
+    <p>A curated set of coding challenges that reinforce data structures and algorithms concepts through repeated practice in Python.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Reading about a data structure and actually using one under time pressure are very different skills, and this course is built to close that gap. Problems are grouped by topic — arrays, strings, trees, graphs, dynamic programming — so you can drill a specific weak spot instead of jumping randomly between unrelated challenges.</p>
+    <p>Each problem set starts at a beginner-friendly difficulty and ramps up gradually, with solutions written idiomatically in Python so you also pick up good habits and common patterns along the way, not just a working answer. It's designed to be worked through repeatedly using the interactive REPL or a Jupyter notebook as your practice environment.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Recognizing common problem patterns</li>
+      <li>Translating a problem statement into a working solution</li>
+      <li>Writing idiomatic, readable Python code under time pressure</li>
+      <li>Testing and debugging your own solutions quickly</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Array and string problems</li>
+      <li>Module 2: Linked list and stack/queue problems</li>
+      <li>Module 3: Tree and graph problems</li>
+      <li>Module 4: Dynamic programming problems</li>
+      <li>Module 5: Mixed timed practice sets</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('python')">&larr; Back to Python Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-py-interview" style="--lang-accent:#4b8bbe">
+  <div class="lang-hero">
+    <h1><span class="accent">Python Interview Prep</span></h1>
+    <p>Commonly asked technical interview questions and Python-specific concepts, with guidance on explaining your thinking clearly.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Technical interviews test more than whether you can solve a problem — they test whether you can explain your reasoning clearly while doing it. This course walks through the most frequently asked data structure and algorithm questions, with a strong focus on articulating your approach out loud before writing any code.</p>
+    <p>It also covers Python-specific talking points that interviewers commonly probe, including list/dict comprehensions, generators, and the GIL's effect on concurrency, since many interviews mix general algorithm questions with language-specific ones. You'll finish with a set of mock interview walkthroughs modeled on real whiteboard-style sessions.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>How to break down and talk through a problem before coding</li>
+      <li>Common Python-specific interview questions</li>
+      <li>List/dict comprehensions, generators, and the gil's effect on concurrency</li>
+      <li>How to discuss time and space complexity confidently</li>
+      <li>Mock interview practice and feedback patterns</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Communicating your thought process</li>
+      <li>Module 2: Core data structure & algorithm questions</li>
+      <li>Module 3: Python-specific concepts interviewers ask about</li>
+      <li>Module 4: Mock whiteboard-style interviews</li>
+      <li>Module 5: Behavioral + technical combined rounds</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('python')">&larr; Back to Python Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-py-projects" style="--lang-accent:#4b8bbe">
+  <div class="lang-hero">
+    <h1><span class="accent">Python Mini Projects</span></h1>
+    <p>Small, self-contained projects that combine multiple concepts to apply Python data structures and algorithms in practice.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Courses that focus purely on concepts can leave a gap between knowing something and being able to build with it — this course closes that gap with short, complete projects. Each one is scoped to be finished in a single sitting, but still touches multiple ideas from earlier courses, like classes with self and inheritance and lists, tuples, and dictionaries.</p>
+    <p>You'll build a command-line contact book backed by a dictionary, then a simple file-organizer script using the os and shutil modules, both using pip where relevant for structure or dependencies. These projects are meant to go in a portfolio, so each one emphasizes clean structure and readable code as much as functionality.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Structuring a small project from scratch</li>
+      <li>Applying classes with self and inheritance in a real context</li>
+      <li>Working with lists, tuples, and dictionaries in a practical setting</li>
+      <li>Basic file or data persistence</li>
+      <li>Writing project code that's clean enough to share</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Planning and structuring a small project</li>
+      <li>Module 2: Building a command-line contact book backed by a dictionary</li>
+      <li>Module 3: Building a simple file-organizer script using the os and shutil modules</li>
+      <li>Module 4: Polishing, testing, and documenting your work</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('python')">&larr; Back to Python Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-java-fundamentals" style="--lang-accent:#e76f51">
+  <div class="lang-hero">
+    <h1><span class="accent">Java Fundamentals</span></h1>
+    <p>The essential syntax and building blocks every Java developer needs before tackling data structures and algorithms.</p>
+  </div>
+  <div class="concept-detail">
+    <p>This course starts from zero, covering explicitly typed variables, core data types, and the operators used to work with them. From there it moves into control flow — conditionals and loops — and methods declared inside classes, the two tools you'll use to structure logic in almost every program you write.</p>
+    <p>Along the way you'll get comfortable with ArrayList, LinkedList, and HashMap from java.util for grouping data, basic input and output, and reading error messages well enough to debug your own code using an IDE such as IntelliJ or Eclipse. By the end, you'll be able to read and write straightforward Java programs confidently, which is the springboard for every other course in this track.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Variables, data types, and operators</li>
+      <li>Conditionals and loops for control flow</li>
+      <li>Writing and calling your own functions</li>
+      <li>Working with ArrayList, LinkedList, and HashMap from java.util</li>
+      <li>Basic debugging and reading error output</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Syntax, variables, and data types</li>
+      <li>Module 2: Operators and control flow</li>
+      <li>Module 3: Functions and scope</li>
+      <li>Module 4: Working with ArrayList, LinkedList, and HashMap from java.util</li>
+      <li>Module 5: Debugging and small practice exercises</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('java')">&larr; Back to Java Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-java-ds" style="--lang-accent:#e76f51">
+  <div class="lang-hero">
+    <h1><span class="accent">Data Structures in Java</span></h1>
+    <p>Build and use the core data structures — arrays, lists, stacks, queues, hash maps, trees, and graphs — in Java.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Once you know the basics of the language, the next step is understanding how data is organized in memory and why that organization matters. This course walks through arrays and linked lists, then stacks and queues, showing how each one is implemented using ArrayList, LinkedList, and HashMap from java.util as well as built from scratch so you understand what's happening under the hood.</p>
+    <p>From there it moves into hash-based structures like HashMap for fast lookups, and finishes with trees and graphs, the two structures behind most real-world systems that model hierarchies or networks. Every structure is paired with the operations it supports, so you leave knowing not just how to build each one but when to reach for it.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Arrays and linked lists, and the trade-offs between them</li>
+      <li>Stacks and queues, and the problems they naturally solve</li>
+      <li>Hash maps for fast key-based lookups</li>
+      <li>Binary trees and binary search trees</li>
+      <li>Graph representations and basic traversal</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Arrays and linked lists</li>
+      <li>Module 2: Stacks and queues</li>
+      <li>Module 3: Hash maps and sets</li>
+      <li>Module 4: Trees and binary search trees</li>
+      <li>Module 5: Graphs and traversal basics</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('java')">&larr; Back to Java Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-java-algorithms" style="--lang-accent:#e76f51">
+  <div class="lang-hero">
+    <h1><span class="accent">Algorithms in Java</span></h1>
+    <p>Core algorithmic techniques — sorting, searching, recursion, and dynamic programming — implemented and analyzed in Java.</p>
+  </div>
+  <div class="concept-detail">
+    <p>This course is about developing algorithmic thinking, not just memorizing code. You'll implement classic sorting algorithms like bubble sort, merge sort, and quicksort in Java, then compare their behavior directly so the trade-off between simplicity and performance becomes concrete rather than theoretical.</p>
+    <p>From there the course covers searching (linear and binary), recursion and how to reason about it, and finally greedy algorithms and dynamic programming — the techniques most commonly asked about in technical interviews. Every algorithm is paired with a time and space complexity discussion, so you build the habit of asking "how does this scale?" for anything you write.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Sorting algorithms and their trade-offs</li>
+      <li>Linear and binary search</li>
+      <li>Recursion and how to trace it</li>
+      <li>Greedy algorithms</li>
+      <li>Introductory dynamic programming</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Sorting algorithms</li>
+      <li>Module 2: Searching techniques</li>
+      <li>Module 3: Recursion</li>
+      <li>Module 4: Greedy algorithms</li>
+      <li>Module 5: Dynamic programming basics</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('java')">&larr; Back to Java Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-java-practice" style="--lang-accent:#e76f51">
+  <div class="lang-hero">
+    <h1><span class="accent">Java Practice Problems</span></h1>
+    <p>A curated set of coding challenges that reinforce data structures and algorithms concepts through repeated practice in Java.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Reading about a data structure and actually using one under time pressure are very different skills, and this course is built to close that gap. Problems are grouped by topic — arrays, strings, trees, graphs, dynamic programming — so you can drill a specific weak spot instead of jumping randomly between unrelated challenges.</p>
+    <p>Each problem set starts at a beginner-friendly difficulty and ramps up gradually, with solutions written idiomatically in Java so you also pick up good habits and common patterns along the way, not just a working answer. It's designed to be worked through repeatedly using an IDE such as IntelliJ or Eclipse as your practice environment.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Recognizing common problem patterns</li>
+      <li>Translating a problem statement into a working solution</li>
+      <li>Writing idiomatic, readable Java code under time pressure</li>
+      <li>Testing and debugging your own solutions quickly</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Array and string problems</li>
+      <li>Module 2: Linked list and stack/queue problems</li>
+      <li>Module 3: Tree and graph problems</li>
+      <li>Module 4: Dynamic programming problems</li>
+      <li>Module 5: Mixed timed practice sets</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('java')">&larr; Back to Java Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-java-interview" style="--lang-accent:#e76f51">
+  <div class="lang-hero">
+    <h1><span class="accent">Java Interview Prep</span></h1>
+    <p>Commonly asked technical interview questions and Java-specific concepts, with guidance on explaining your thinking clearly.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Technical interviews test more than whether you can solve a problem — they test whether you can explain your reasoning clearly while doing it. This course walks through the most frequently asked data structure and algorithm questions, with a strong focus on articulating your approach out loud before writing any code.</p>
+    <p>It also covers Java-specific talking points that interviewers commonly probe, including strong typing, checked exceptions, and interface-based design, since many interviews mix general algorithm questions with language-specific ones. You'll finish with a set of mock interview walkthroughs modeled on real whiteboard-style sessions.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>How to break down and talk through a problem before coding</li>
+      <li>Common Java-specific interview questions</li>
+      <li>Strong typing, checked exceptions, and interface-based design</li>
+      <li>How to discuss time and space complexity confidently</li>
+      <li>Mock interview practice and feedback patterns</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Communicating your thought process</li>
+      <li>Module 2: Core data structure & algorithm questions</li>
+      <li>Module 3: Java-specific concepts interviewers ask about</li>
+      <li>Module 4: Mock whiteboard-style interviews</li>
+      <li>Module 5: Behavioral + technical combined rounds</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('java')">&larr; Back to Java Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-java-projects" style="--lang-accent:#e76f51">
+  <div class="lang-hero">
+    <h1><span class="accent">Java Mini Projects</span></h1>
+    <p>Small, self-contained projects that combine multiple concepts to apply Java data structures and algorithms in practice.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Courses that focus purely on concepts can leave a gap between knowing something and being able to build with it — this course closes that gap with short, complete projects. Each one is scoped to be finished in a single sitting, but still touches multiple ideas from earlier courses, like classes, interfaces, and access modifiers and ArrayList, LinkedList, and HashMap from java.util.</p>
+    <p>You'll build a simple inventory management system using classes and collections, then a console-based student record manager with file I/O, both using Maven or Gradle where relevant for structure or dependencies. These projects are meant to go in a portfolio, so each one emphasizes clean structure and readable code as much as functionality.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Structuring a small project from scratch</li>
+      <li>Applying classes, interfaces, and access modifiers in a real context</li>
+      <li>Working with ArrayList, LinkedList, and HashMap from java.util in a practical setting</li>
+      <li>Basic file or data persistence</li>
+      <li>Writing project code that's clean enough to share</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Planning and structuring a small project</li>
+      <li>Module 2: Building a simple inventory management system using classes and collections</li>
+      <li>Module 3: Building a console-based student record manager with file I/O</li>
+      <li>Module 4: Polishing, testing, and documenting your work</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('java')">&larr; Back to Java Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-cpp-fundamentals" style="--lang-accent:#5b7fd6">
+  <div class="lang-hero">
+    <h1><span class="accent">C++ Fundamentals</span></h1>
+    <p>The essential syntax and building blocks every C++ developer needs before tackling data structures and algorithms.</p>
+  </div>
+  <div class="concept-detail">
+    <p>This course starts from zero, covering explicitly typed variables and references, core data types, and the operators used to work with them. From there it moves into control flow — conditionals and loops — and functions with pass-by-value and pass-by-reference, the two tools you'll use to structure logic in almost every program you write.</p>
+    <p>Along the way you'll get comfortable with STL containers such as vector, map, and unordered_map for grouping data, basic input and output, and reading error messages well enough to debug your own code using a compiler such as g++ alongside a debugger. By the end, you'll be able to read and write straightforward C++ programs confidently, which is the springboard for every other course in this track.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Variables, data types, and operators</li>
+      <li>Conditionals and loops for control flow</li>
+      <li>Writing and calling your own functions</li>
+      <li>Working with STL containers such as vector, map, and unordered_map</li>
+      <li>Basic debugging and reading error output</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Syntax, variables, and data types</li>
+      <li>Module 2: Operators and control flow</li>
+      <li>Module 3: Functions and scope</li>
+      <li>Module 4: Working with STL containers such as vector, map, and unordered_map</li>
+      <li>Module 5: Debugging and small practice exercises</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('cpp')">&larr; Back to C++ Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-cpp-ds" style="--lang-accent:#5b7fd6">
+  <div class="lang-hero">
+    <h1><span class="accent">Data Structures in C++</span></h1>
+    <p>Build and use the core data structures — arrays, lists, stacks, queues, hash maps, trees, and graphs — in C++.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Once you know the basics of the language, the next step is understanding how data is organized in memory and why that organization matters. This course walks through arrays and linked lists, then stacks and queues, showing how each one is implemented using STL containers such as vector, map, and unordered_map as well as built from scratch so you understand what's happening under the hood.</p>
+    <p>From there it moves into hash-based structures like unordered_map for fast lookups, and finishes with trees and graphs, the two structures behind most real-world systems that model hierarchies or networks. Every structure is paired with the operations it supports, so you leave knowing not just how to build each one but when to reach for it.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Arrays and linked lists, and the trade-offs between them</li>
+      <li>Stacks and queues, and the problems they naturally solve</li>
+      <li>Hash maps for fast key-based lookups</li>
+      <li>Binary trees and binary search trees</li>
+      <li>Graph representations and basic traversal</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Arrays and linked lists</li>
+      <li>Module 2: Stacks and queues</li>
+      <li>Module 3: Hash maps and sets</li>
+      <li>Module 4: Trees and binary search trees</li>
+      <li>Module 5: Graphs and traversal basics</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('cpp')">&larr; Back to C++ Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-cpp-algorithms" style="--lang-accent:#5b7fd6">
+  <div class="lang-hero">
+    <h1><span class="accent">Algorithms in C++</span></h1>
+    <p>Core algorithmic techniques — sorting, searching, recursion, and dynamic programming — implemented and analyzed in C++.</p>
+  </div>
+  <div class="concept-detail">
+    <p>This course is about developing algorithmic thinking, not just memorizing code. You'll implement classic sorting algorithms like bubble sort, merge sort, and quicksort in C++, then compare their behavior directly so the trade-off between simplicity and performance becomes concrete rather than theoretical.</p>
+    <p>From there the course covers searching (linear and binary), recursion and how to reason about it, and finally greedy algorithms and dynamic programming — the techniques most commonly asked about in technical interviews. Every algorithm is paired with a time and space complexity discussion, so you build the habit of asking "how does this scale?" for anything you write.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Sorting algorithms and their trade-offs</li>
+      <li>Linear and binary search</li>
+      <li>Recursion and how to trace it</li>
+      <li>Greedy algorithms</li>
+      <li>Introductory dynamic programming</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Sorting algorithms</li>
+      <li>Module 2: Searching techniques</li>
+      <li>Module 3: Recursion</li>
+      <li>Module 4: Greedy algorithms</li>
+      <li>Module 5: Dynamic programming basics</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('cpp')">&larr; Back to C++ Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-cpp-practice" style="--lang-accent:#5b7fd6">
+  <div class="lang-hero">
+    <h1><span class="accent">C++ Practice Problems</span></h1>
+    <p>A curated set of coding challenges that reinforce data structures and algorithms concepts through repeated practice in C++.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Reading about a data structure and actually using one under time pressure are very different skills, and this course is built to close that gap. Problems are grouped by topic — arrays, strings, trees, graphs, dynamic programming — so you can drill a specific weak spot instead of jumping randomly between unrelated challenges.</p>
+    <p>Each problem set starts at a beginner-friendly difficulty and ramps up gradually, with solutions written idiomatically in C++ so you also pick up good habits and common patterns along the way, not just a working answer. It's designed to be worked through repeatedly using a compiler such as g++ alongside a debugger as your practice environment.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Recognizing common problem patterns</li>
+      <li>Translating a problem statement into a working solution</li>
+      <li>Writing idiomatic, readable C++ code under time pressure</li>
+      <li>Testing and debugging your own solutions quickly</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Array and string problems</li>
+      <li>Module 2: Linked list and stack/queue problems</li>
+      <li>Module 3: Tree and graph problems</li>
+      <li>Module 4: Dynamic programming problems</li>
+      <li>Module 5: Mixed timed practice sets</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('cpp')">&larr; Back to C++ Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-cpp-interview" style="--lang-accent:#5b7fd6">
+  <div class="lang-hero">
+    <h1><span class="accent">C++ Interview Prep</span></h1>
+    <p>Commonly asked technical interview questions and C++-specific concepts, with guidance on explaining your thinking clearly.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Technical interviews test more than whether you can solve a problem — they test whether you can explain your reasoning clearly while doing it. This course walks through the most frequently asked data structure and algorithm questions, with a strong focus on articulating your approach out loud before writing any code.</p>
+    <p>It also covers C++-specific talking points that interviewers commonly probe, including pointers, manual memory management with new/delete, and templates, since many interviews mix general algorithm questions with language-specific ones. You'll finish with a set of mock interview walkthroughs modeled on real whiteboard-style sessions.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>How to break down and talk through a problem before coding</li>
+      <li>Common C++-specific interview questions</li>
+      <li>Pointers, manual memory management with new/delete, and templates</li>
+      <li>How to discuss time and space complexity confidently</li>
+      <li>Mock interview practice and feedback patterns</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Communicating your thought process</li>
+      <li>Module 2: Core data structure & algorithm questions</li>
+      <li>Module 3: C++-specific concepts interviewers ask about</li>
+      <li>Module 4: Mock whiteboard-style interviews</li>
+      <li>Module 5: Behavioral + technical combined rounds</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('cpp')">&larr; Back to C++ Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-cpp-projects" style="--lang-accent:#5b7fd6">
+  <div class="lang-hero">
+    <h1><span class="accent">C++ Mini Projects</span></h1>
+    <p>Small, self-contained projects that combine multiple concepts to apply C++ data structures and algorithms in practice.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Courses that focus purely on concepts can leave a gap between knowing something and being able to build with it — this course closes that gap with short, complete projects. Each one is scoped to be finished in a single sitting, but still touches multiple ideas from earlier courses, like classes with constructors, destructors, and inheritance and STL containers such as vector, map, and unordered_map.</p>
+    <p>You'll build a simple student record system using structs and vectors, then a console-based library catalog using classes and file streams, both using CMake where relevant for structure or dependencies. These projects are meant to go in a portfolio, so each one emphasizes clean structure and readable code as much as functionality.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Structuring a small project from scratch</li>
+      <li>Applying classes with constructors, destructors, and inheritance in a real context</li>
+      <li>Working with STL containers such as vector, map, and unordered_map in a practical setting</li>
+      <li>Basic file or data persistence</li>
+      <li>Writing project code that's clean enough to share</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Planning and structuring a small project</li>
+      <li>Module 2: Building a simple student record system using structs and vectors</li>
+      <li>Module 3: Building a console-based library catalog using classes and file streams</li>
+      <li>Module 4: Polishing, testing, and documenting your work</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('cpp')">&larr; Back to C++ Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-cs-fundamentals" style="--lang-accent:#7b4fa6">
+  <div class="lang-hero">
+    <h1><span class="accent">C# Fundamentals</span></h1>
+    <p>The essential syntax and building blocks every C# developer needs before tackling data structures and algorithms.</p>
+  </div>
+  <div class="concept-detail">
+    <p>This course starts from zero, covering variables declared with var or explicit types, core data types, and the operators used to work with them. From there it moves into control flow — conditionals and loops — and methods and lambda expressions, the two tools you'll use to structure logic in almost every program you write.</p>
+    <p>Along the way you'll get comfortable with List<T> and Dictionary<TKey,TValue> from System.Collections.Generic for grouping data, basic input and output, and reading error messages well enough to debug your own code using Visual Studio or the .NET CLI. By the end, you'll be able to read and write straightforward C# programs confidently, which is the springboard for every other course in this track.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Variables, data types, and operators</li>
+      <li>Conditionals and loops for control flow</li>
+      <li>Writing and calling your own functions</li>
+      <li>Working with List<T> and Dictionary<TKey,TValue> from System.Collections.Generic</li>
+      <li>Basic debugging and reading error output</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Syntax, variables, and data types</li>
+      <li>Module 2: Operators and control flow</li>
+      <li>Module 3: Functions and scope</li>
+      <li>Module 4: Working with List<T> and Dictionary<TKey,TValue> from System.Collections.Generic</li>
+      <li>Module 5: Debugging and small practice exercises</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('csharp')">&larr; Back to C# Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-cs-ds" style="--lang-accent:#7b4fa6">
+  <div class="lang-hero">
+    <h1><span class="accent">Data Structures in C#</span></h1>
+    <p>Build and use the core data structures — arrays, lists, stacks, queues, hash maps, trees, and graphs — in C#.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Once you know the basics of the language, the next step is understanding how data is organized in memory and why that organization matters. This course walks through arrays and linked lists, then stacks and queues, showing how each one is implemented using List<T> and Dictionary<TKey,TValue> from System.Collections.Generic as well as built from scratch so you understand what's happening under the hood.</p>
+    <p>From there it moves into hash-based structures like Dictionary for fast lookups, and finishes with trees and graphs, the two structures behind most real-world systems that model hierarchies or networks. Every structure is paired with the operations it supports, so you leave knowing not just how to build each one but when to reach for it.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Arrays and linked lists, and the trade-offs between them</li>
+      <li>Stacks and queues, and the problems they naturally solve</li>
+      <li>Hash maps for fast key-based lookups</li>
+      <li>Binary trees and binary search trees</li>
+      <li>Graph representations and basic traversal</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Arrays and linked lists</li>
+      <li>Module 2: Stacks and queues</li>
+      <li>Module 3: Hash maps and sets</li>
+      <li>Module 4: Trees and binary search trees</li>
+      <li>Module 5: Graphs and traversal basics</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('csharp')">&larr; Back to C# Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-cs-algorithms" style="--lang-accent:#7b4fa6">
+  <div class="lang-hero">
+    <h1><span class="accent">Algorithms in C#</span></h1>
+    <p>Core algorithmic techniques — sorting, searching, recursion, and dynamic programming — implemented and analyzed in C#.</p>
+  </div>
+  <div class="concept-detail">
+    <p>This course is about developing algorithmic thinking, not just memorizing code. You'll implement classic sorting algorithms like bubble sort, merge sort, and quicksort in C#, then compare their behavior directly so the trade-off between simplicity and performance becomes concrete rather than theoretical.</p>
+    <p>From there the course covers searching (linear and binary), recursion and how to reason about it, and finally greedy algorithms and dynamic programming — the techniques most commonly asked about in technical interviews. Every algorithm is paired with a time and space complexity discussion, so you build the habit of asking "how does this scale?" for anything you write.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Sorting algorithms and their trade-offs</li>
+      <li>Linear and binary search</li>
+      <li>Recursion and how to trace it</li>
+      <li>Greedy algorithms</li>
+      <li>Introductory dynamic programming</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Sorting algorithms</li>
+      <li>Module 2: Searching techniques</li>
+      <li>Module 3: Recursion</li>
+      <li>Module 4: Greedy algorithms</li>
+      <li>Module 5: Dynamic programming basics</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('csharp')">&larr; Back to C# Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-cs-practice" style="--lang-accent:#7b4fa6">
+  <div class="lang-hero">
+    <h1><span class="accent">C# Practice Problems</span></h1>
+    <p>A curated set of coding challenges that reinforce data structures and algorithms concepts through repeated practice in C#.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Reading about a data structure and actually using one under time pressure are very different skills, and this course is built to close that gap. Problems are grouped by topic — arrays, strings, trees, graphs, dynamic programming — so you can drill a specific weak spot instead of jumping randomly between unrelated challenges.</p>
+    <p>Each problem set starts at a beginner-friendly difficulty and ramps up gradually, with solutions written idiomatically in C# so you also pick up good habits and common patterns along the way, not just a working answer. It's designed to be worked through repeatedly using Visual Studio or the .NET CLI as your practice environment.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Recognizing common problem patterns</li>
+      <li>Translating a problem statement into a working solution</li>
+      <li>Writing idiomatic, readable C# code under time pressure</li>
+      <li>Testing and debugging your own solutions quickly</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Array and string problems</li>
+      <li>Module 2: Linked list and stack/queue problems</li>
+      <li>Module 3: Tree and graph problems</li>
+      <li>Module 4: Dynamic programming problems</li>
+      <li>Module 5: Mixed timed practice sets</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('csharp')">&larr; Back to C# Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-cs-interview" style="--lang-accent:#7b4fa6">
+  <div class="lang-hero">
+    <h1><span class="accent">C# Interview Prep</span></h1>
+    <p>Commonly asked technical interview questions and C#-specific concepts, with guidance on explaining your thinking clearly.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Technical interviews test more than whether you can solve a problem — they test whether you can explain your reasoning clearly while doing it. This course walks through the most frequently asked data structure and algorithm questions, with a strong focus on articulating your approach out loud before writing any code.</p>
+    <p>It also covers C#-specific talking points that interviewers commonly probe, including garbage collection, LINQ queries, and interface-based design, since many interviews mix general algorithm questions with language-specific ones. You'll finish with a set of mock interview walkthroughs modeled on real whiteboard-style sessions.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>How to break down and talk through a problem before coding</li>
+      <li>Common C#-specific interview questions</li>
+      <li>Garbage collection, linq queries, and interface-based design</li>
+      <li>How to discuss time and space complexity confidently</li>
+      <li>Mock interview practice and feedback patterns</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Communicating your thought process</li>
+      <li>Module 2: Core data structure & algorithm questions</li>
+      <li>Module 3: C#-specific concepts interviewers ask about</li>
+      <li>Module 4: Mock whiteboard-style interviews</li>
+      <li>Module 5: Behavioral + technical combined rounds</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('csharp')">&larr; Back to C# Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-course-cs-projects" style="--lang-accent:#7b4fa6">
+  <div class="lang-hero">
+    <h1><span class="accent">C# Mini Projects</span></h1>
+    <p>Small, self-contained projects that combine multiple concepts to apply C# data structures and algorithms in practice.</p>
+  </div>
+  <div class="concept-detail">
+    <p>Courses that focus purely on concepts can leave a gap between knowing something and being able to build with it — this course closes that gap with short, complete projects. Each one is scoped to be finished in a single sitting, but still touches multiple ideas from earlier courses, like classes, interfaces, and properties and List<T> and Dictionary<TKey,TValue> from System.Collections.Generic.</p>
+    <p>You'll build a console-based library manager using classes and collections, then a simple banking simulation using OOP and file storage, both using NuGet where relevant for structure or dependencies. These projects are meant to go in a portfolio, so each one emphasizes clean structure and readable code as much as functionality.</p>
+    <h2>What You'll Learn</h2>
+    <ul>
+      <li>Structuring a small project from scratch</li>
+      <li>Applying classes, interfaces, and properties in a real context</li>
+      <li>Working with List<T> and Dictionary<TKey,TValue> from System.Collections.Generic in a practical setting</li>
+      <li>Basic file or data persistence</li>
+      <li>Writing project code that's clean enough to share</li>
+    </ul>
+    <h2>Course Outline</h2>
+    <ul>
+      <li>Module 1: Planning and structuring a small project</li>
+      <li>Module 2: Building a console-based library manager using classes and collections</li>
+      <li>Module 3: Building a simple banking simulation using OOP and file storage</li>
+      <li>Module 4: Polishing, testing, and documenting your work</li>
+    </ul>
+
+    <a class="back-link" onclick="showView('csharp')">&larr; Back to C# Courses</a>
+  </div>
+</section>
+
+<section class="view" id="view-enroll">
+  <div class="lang-hero">
+    <h1><span class="accent" style="color:#febd69">All Courses</span></h1>
+    <p>Every course across every language, in one place — pick one and click Enroll to jump straight in.</p>
+  </div>
+  <div class="enroll-wrap">
+      <div class="enroll-lang-block">
+        <h2 class="enroll-lang-title" style="color:#f0c419">JavaScript</h2>
+        <div class="enroll-list">
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>JavaScript Fundamentals</h3>
+            <p>Core syntax, variables, control flow, and functions to get started in JavaScript.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-js-fundamentals'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>Data Structures in JavaScript</h3>
+            <p>Arrays, linked lists, stacks, queues, hash maps, trees, and graphs in JavaScript.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-js-ds'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>Algorithms in JavaScript</h3>
+            <p>Sorting, searching, recursion, and dynamic programming implemented in JavaScript.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-js-algorithms'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>JavaScript Practice Problems</h3>
+            <p>A curated set of coding challenges to sharpen your JavaScript problem-solving skills.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-js-practice'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>JavaScript Interview Prep</h3>
+            <p>Common interview questions and JavaScript-specific concepts, with mock interview practice.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-js-interview'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>JavaScript Mini Projects</h3>
+            <p>Small, self-contained projects that apply JavaScript data structures and algorithms.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-js-projects'">Enroll &rsaquo;</button>
+        </div>
+        </div>
+      </div>
+      <div class="enroll-lang-block">
+        <h2 class="enroll-lang-title" style="color:#4b8bbe">Python</h2>
+        <div class="enroll-list">
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>Python Fundamentals</h3>
+            <p>Core syntax, variables, control flow, and functions to get started in Python.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-py-fundamentals'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>Data Structures in Python</h3>
+            <p>Arrays, linked lists, stacks, queues, hash maps, trees, and graphs in Python.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-py-ds'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>Algorithms in Python</h3>
+            <p>Sorting, searching, recursion, and dynamic programming implemented in Python.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-py-algorithms'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>Python Practice Problems</h3>
+            <p>A curated set of coding challenges to sharpen your Python problem-solving skills.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-py-practice'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>Python Interview Prep</h3>
+            <p>Common interview questions and Python-specific concepts, with mock interview practice.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-py-interview'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>Python Mini Projects</h3>
+            <p>Small, self-contained projects that apply Python data structures and algorithms.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-py-projects'">Enroll &rsaquo;</button>
+        </div>
+        </div>
+      </div>
+      <div class="enroll-lang-block">
+        <h2 class="enroll-lang-title" style="color:#e76f51">Java</h2>
+        <div class="enroll-list">
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>Java Fundamentals</h3>
+            <p>Core syntax, variables, control flow, and functions to get started in Java.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-java-fundamentals'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>Data Structures in Java</h3>
+            <p>Arrays, linked lists, stacks, queues, hash maps, trees, and graphs in Java.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-java-ds'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>Algorithms in Java</h3>
+            <p>Sorting, searching, recursion, and dynamic programming implemented in Java.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-java-algorithms'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>Java Practice Problems</h3>
+            <p>A curated set of coding challenges to sharpen your Java problem-solving skills.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-java-practice'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>Java Interview Prep</h3>
+            <p>Common interview questions and Java-specific concepts, with mock interview practice.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-java-interview'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>Java Mini Projects</h3>
+            <p>Small, self-contained projects that apply Java data structures and algorithms.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-java-projects'">Enroll &rsaquo;</button>
+        </div>
+        </div>
+      </div>
+      <div class="enroll-lang-block">
+        <h2 class="enroll-lang-title" style="color:#5b7fd6">C++</h2>
+        <div class="enroll-list">
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>C++ Fundamentals</h3>
+            <p>Core syntax, variables, control flow, and functions to get started in C++.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-cpp-fundamentals'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>Data Structures in C++</h3>
+            <p>Arrays, linked lists, stacks, queues, hash maps, trees, and graphs in C++.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-cpp-ds'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>Algorithms in C++</h3>
+            <p>Sorting, searching, recursion, and dynamic programming implemented in C++.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-cpp-algorithms'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>C++ Practice Problems</h3>
+            <p>A curated set of coding challenges to sharpen your C++ problem-solving skills.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-cpp-practice'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>C++ Interview Prep</h3>
+            <p>Common interview questions and C++-specific concepts, with mock interview practice.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-cpp-interview'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>C++ Mini Projects</h3>
+            <p>Small, self-contained projects that apply C++ data structures and algorithms.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-cpp-projects'">Enroll &rsaquo;</button>
+        </div>
+        </div>
+      </div>
+      <div class="enroll-lang-block">
+        <h2 class="enroll-lang-title" style="color:#7b4fa6">C#</h2>
+        <div class="enroll-list">
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>C# Fundamentals</h3>
+            <p>Core syntax, variables, control flow, and functions to get started in C#.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-cs-fundamentals'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>Data Structures in C#</h3>
+            <p>Arrays, linked lists, stacks, queues, hash maps, trees, and graphs in C#.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-cs-ds'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>Algorithms in C#</h3>
+            <p>Sorting, searching, recursion, and dynamic programming implemented in C#.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-cs-algorithms'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>C# Practice Problems</h3>
+            <p>A curated set of coding challenges to sharpen your C# problem-solving skills.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-cs-practice'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>C# Interview Prep</h3>
+            <p>Common interview questions and C#-specific concepts, with mock interview practice.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-cs-interview'">Enroll &rsaquo;</button>
+        </div>
+        <div class="enroll-item">
+          <div class="enroll-item-info">
+            <h3>C# Mini Projects</h3>
+            <p>Small, self-contained projects that apply C# data structures and algorithms.</p>
+          </div>
+          <button class="enroll-btn" onclick="location.hash='course-cs-projects'">Enroll &rsaquo;</button>
+        </div>
+        </div>
+      </div>
+  </div>
+</section>
+
+<section class="view" id="view-tictactoe">
+  <div class="ttt-section">
+    <div class="ttt-wrap">
+      <div class="ttt-status" id="ttt-status">&nbsp;</div>
+      <button class="ttt-new-game" onclick="tttNewGame()">New Game</button>
+      <h1 class="ttt-title">Tic Tac Toe</h1>
+      <div class="ttt-board" id="ttt-board"></div>
+      <button class="ttt-reset" onclick="tttResetScore()">Reset Game</button>
+      <a class="ttt-home-link" href="#home" onclick="showView('home')">&larr; Back to CodeDS</a>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-login">
+  <header class="lg-nav">
+    <a class="lg-logo" href="#home" onclick="showView('home')">CodeDS</a>
+    <nav class="lg-navlinks">
+      <a onclick="showView('home')">Home</a>
+      <a onclick="showView('home');setTimeout(()=>document.getElementById('grid').scrollIntoView({behavior:'smooth'}),0)">About</a>
+      <a onclick="showView('home');setTimeout(()=>document.getElementById('grid').scrollIntoView({behavior:'smooth'}),0)">Services</a>
+      <a onclick="showView('home')">Contact</a>
+      <a class="lg-login-nav" onclick="showView('login')">Login</a>
+    </nav>
+  </header>
+
+  <div class="lg-login-page">
+    <div class="lg-login-box">
+      <button class="lg-close" onclick="showView('home')">×</button>
+      <h1>Login</h1>
+      <form id="loginForm">
+        <div class="lg-field">
+          <input type="email" placeholder="Email" required>
+          <span class="lg-field-icon">✉</span>
+        </div>
+        <div class="lg-field">
+          <input type="password" placeholder="Password" required>
+          <span class="lg-field-icon">🔒</span>
+        </div>
+        <div class="lg-login-options">
+          <label class="lg-remember"><input type="checkbox"> Remember me</label>
+          <a href="Recovery.html">Forgot Password?</a>
+        </div>
+        <button class="lg-login-btn" type="submit" onclick="goHome(event)">Login</button>
+      </form>
+      <div class="lg-register">Don't have an account? <a href="#" onclick="alert('Registration form can be added here.');return false">Register</a></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-cols">
+    <div><h4>Get to Know Us</h4>
+      <a href="#">Careers</a><a href="#">Blog</a><a href="#">About us</a>
+    </div>
+    <div><h4>&nbsp;</h4>
+      <a href="#">Team</a><a href="#">Terms of use</a><a href="#">Privacy policy</a>
+    </div>
+    <div class="foot-social">
+      <h4>Follow Us</h4>
+      <div class="foot-social-icons">
+        <a href="#" aria-label="Facebook" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.16 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.23.2 2.23.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.91h-2.34V22c4.78-.78 8.44-4.94 8.44-9.94z"/></svg>
+        </a>
+        <a href="#" aria-label="Instagram" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M12 2c2.72 0 3.06.01 4.12.06 1.06.05 1.79.22 2.43.47.66.26 1.22.6 1.77 1.15.55.55.9 1.11 1.15 1.77.25.64.42 1.37.47 2.43.05 1.06.06 1.4.06 4.12s-.01 3.06-.06 4.12c-.05 1.06-.22 1.79-.47 2.43a4.9 4.9 0 0 1-1.15 1.77 4.9 4.9 0 0 1-1.77 1.15c-.64.25-1.37.42-2.43.47-1.06.05-1.4.06-4.12.06s-3.06-.01-4.12-.06c-1.06-.05-1.79-.22-2.43-.47a4.9 4.9 0 0 1-1.77-1.15 4.9 4.9 0 0 1-1.15-1.77c-.25-.64-.42-1.37-.47-2.43C2.01 15.06 2 14.72 2 12s.01-3.06.06-4.12c.05-1.06.22-1.79.47-2.43.26-.66.6-1.22 1.15-1.77.55-.55 1.11-.9 1.77-1.15.64-.25 1.37-.42 2.43-.47C8.94 2.01 9.28 2 12 2zm0 1.8c-2.67 0-2.99.01-4.04.06-.86.04-1.33.18-1.64.3-.41.16-.71.35-1.02.66-.31.31-.5.61-.66 1.02-.12.31-.26.78-.3 1.64C4.29 8.53 4.28 8.85 4.28 12s.01 3.47.06 4.52c.04.86.18 1.33.3 1.64.16.41.35.71.66 1.02.31.31.61.5 1.02.66.31.12.78.26 1.64.3 1.05.05 1.37.06 4.04.06s2.99-.01 4.04-.06c.86-.04 1.33-.18 1.64-.3.41-.16.71-.35 1.02-.66.31-.31.5-.61.66-1.02.12-.31.26-.78.3-1.64.05-1.05.06-1.37.06-4.52s-.01-3.47-.06-4.52c-.04-.86-.18-1.33-.3-1.64a2.76 2.76 0 0 0-.66-1.02 2.76 2.76 0 0 0-1.02-.66c-.31-.12-.78-.26-1.64-.3-1.05-.05-1.37-.06-4.04-.06zm0 4.36a3.84 3.84 0 1 1 0 7.68 3.84 3.84 0 0 1 0-7.68zm0 1.8a2.04 2.04 0 1 0 0 4.08 2.04 2.04 0 0 0 0-4.08zm4.9-1.99a.9.9 0 1 1-1.8 0 .9.9 0 0 1 1.8 0z"/></svg>
+        </a>
+        <a href="#" aria-label="Twitter" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M22.46 6c-.77.34-1.6.57-2.46.67.89-.53 1.56-1.37 1.88-2.38-.83.49-1.75.85-2.72 1.04A4.28 4.28 0 0 0 11.9 9.03c0 .34.04.67.11.98a12.14 12.14 0 0 1-8.82-4.47 4.28 4.28 0 0 0 1.33 5.71c-.7-.02-1.36-.21-1.94-.53v.05c0 2.08 1.48 3.82 3.44 4.21-.36.1-.74.15-1.13.15-.28 0-.55-.03-.81-.08.55 1.71 2.14 2.95 4.02 2.99A8.6 8.6 0 0 1 2 19.54a12.13 12.13 0 0 0 6.56 1.92c7.87 0 12.18-6.52 12.18-12.18l-.01-.55c.84-.6 1.56-1.35 2.13-2.2-.77.34-1.6.57-2.46.67z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-brand">Code<span style="color:#febd69">DS</span> with us</div>
+  <div class="foot-copy">© 1996-2024, CodeDS.com, Inc. or its affiliates</div>
+</footer>
+
+
+<script>
+function showView(name){
+  document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active-view');});
+  var target = document.getElementById('view-' + name);
+  if(target){ target.classList.add('active-view'); } else { document.getElementById('view-home').classList.add('active-view'); }
+  document.querySelectorAll('.catbar a[data-view]').forEach(function(a){
+    a.classList.toggle('active', a.dataset.view === name);
+  });
+  var isGame = (name === 'tictactoe' || name === 'login');
+  var topbar = document.querySelector('.topbar');
+  var catbar = document.querySelector('.catbar');
+  var siteFooter = document.querySelector('footer');
+  if(topbar) topbar.style.display = isGame ? 'none' : '';
+  if(catbar) catbar.style.display = isGame ? 'none' : '';
+  if(siteFooter) siteFooter.style.display = isGame ? 'none' : '';
+  window.scrollTo({top:0,behavior:'instant'});
+}
+document.querySelectorAll('.catbar a[data-view]').forEach(function(a){
+  a.addEventListener('click', function(e){
+    e.preventDefault();
+    var name = a.dataset.view;
+    location.hash = name;
+    showView(name);
+  });
+});
+window.addEventListener('hashchange', function(){
+  showView(location.hash.replace('#','') || 'home');
+});
+showView(location.hash.replace('#','') || 'login');
+
+/* ---------- TIC TAC TOE (merged) ---------- */
+let tttGame = Array(9).fill('');
+let tttTurn = 'O';
+let tttLocked = false;
+const tttCombos = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+
+function tttDraw(){
+  const b = document.getElementById('ttt-board');
+  if(!b) return;
+  b.innerHTML = '';
+  tttGame.forEach((v,i)=>{
+    const c = document.createElement('button');
+    c.className = 'ttt-cell' + (v ? ' ' + v.toLowerCase() : '');
+    c.textContent = v;
+    c.onclick = () => tttMove(i);
+    b.appendChild(c);
+  });
+}
+
+function tttMove(i){
+  if (tttGame[i] || tttLocked) return;
+  tttGame[i] = tttTurn;
+  tttDraw();
+  const win = tttCombos.find(a => tttGame[a[0]] && tttGame[a[0]] === tttGame[a[1]] && tttGame[a[1]] === tttGame[a[2]]);
+  if (win){
+    tttLocked = true;
+    win.forEach(idx => document.querySelectorAll('.ttt-cell')[idx].style.background = '#d9f0e3');
+    document.getElementById('ttt-status').textContent = 'Congratulations, Winner is ' + tttTurn;
+    return;
+  }
+  if (tttGame.every(Boolean)){
+    tttLocked = true;
+    document.getElementById('ttt-status').textContent = "It's a draw!";
+    return;
+  }
+  tttTurn = tttTurn === 'X' ? 'O' : 'X';
+}
+
+function tttNewGame(){
+  tttGame = Array(9).fill('');
+  tttTurn = 'O';
+  tttLocked = false;
+  const status = document.getElementById('ttt-status');
+  if(status) status.innerHTML = '&nbsp;';
+  tttDraw();
+}
+
+function tttResetScore(){ tttNewGame(); }
+
+tttDraw();
+
+/* ---------- LOGIN (merged) ---------- */
+function goHome(e){
+  e.preventDefault();
+  showView('home');
+}
+document.getElementById('loginForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  showView('home');
+});
+
+/* ---------- SEARCH ---------- */
+const searchIndex = [
+  {keywords:['all courses','enroll','courses'], view:'enroll'},
+  {keywords:['array','arrays'], view:'concept-array'},
+  {keywords:['sorting','sort'], view:'concept-sorting'},
+  {keywords:['bitmask','bit mask','bit manipulation'], view:'concept-bitmask'},
+  {keywords:['linked list','linkedlist','linked lists'], view:'concept-linkedlist'},
+  {keywords:['union find','unionfind','disjoint set'], view:'concept-unionfind'},
+  {keywords:['fenwick tree','fenwick','binary indexed tree'], view:'concept-fenwick'},
+  {keywords:['segment tree','segment'], view:'concept-segment'},
+  {keywords:['graph traversal','graph','graphs','bfs','dfs'], view:'concept-graph'},
+  {keywords:['stack'], view:'concept-stack'},
+  {keywords:['queue'], view:'concept-queue'},
+  {keywords:['binary search tree','bst'], view:'concept-bst'},
+
+  {keywords:['javascript','js'], view:'javascript'},
+  {keywords:['python','py'], view:'python'},
+  {keywords:['java'], view:'java'},
+  {keywords:['c++','cpp'], view:'cpp'},
+  {keywords:['c#','csharp','c sharp'], view:'csharp'},
+
+  {keywords:['javascript fundamentals'], view:'course-js-fundamentals'},
+  {keywords:['data structures in javascript'], view:'course-js-ds'},
+  {keywords:['algorithms in javascript'], view:'course-js-algorithms'},
+  {keywords:['javascript practice problems'], view:'course-js-practice'},
+  {keywords:['javascript interview prep'], view:'course-js-interview'},
+  {keywords:['javascript mini projects'], view:'course-js-projects'},
+
+  {keywords:['python fundamentals'], view:'course-py-fundamentals'},
+  {keywords:['data structures in python'], view:'course-py-ds'},
+  {keywords:['algorithms in python'], view:'course-py-algorithms'},
+  {keywords:['python practice problems'], view:'course-py-practice'},
+  {keywords:['python interview prep'], view:'course-py-interview'},
+  {keywords:['python mini projects'], view:'course-py-projects'},
+
+  {keywords:['java fundamentals'], view:'course-java-fundamentals'},
+  {keywords:['data structures in java'], view:'course-java-ds'},
+  {keywords:['algorithms in java'], view:'course-java-algorithms'},
+  {keywords:['java practice problems'], view:'course-java-practice'},
+  {keywords:['java interview prep'], view:'course-java-interview'},
+  {keywords:['java mini projects'], view:'course-java-projects'},
+
+  {keywords:['c++ fundamentals','cpp fundamentals'], view:'course-cpp-fundamentals'},
+  {keywords:['data structures in c++','data structures in cpp'], view:'course-cpp-ds'},
+  {keywords:['algorithms in c++','algorithms in cpp'], view:'course-cpp-algorithms'},
+  {keywords:['c++ practice problems','cpp practice problems'], view:'course-cpp-practice'},
+  {keywords:['c++ interview prep','cpp interview prep'], view:'course-cpp-interview'},
+  {keywords:['c++ mini projects','cpp mini projects'], view:'course-cpp-projects'},
+
+  {keywords:['c# fundamentals','csharp fundamentals'], view:'course-cs-fundamentals'},
+  {keywords:['data structures in c#','data structures in csharp'], view:'course-cs-ds'},
+  {keywords:['algorithms in c#','algorithms in csharp'], view:'course-cs-algorithms'},
+  {keywords:['c# practice problems','csharp practice problems'], view:'course-cs-practice'},
+  {keywords:['c# interview prep','csharp interview prep'], view:'course-cs-interview'},
+  {keywords:['c# mini projects','csharp mini projects'], view:'course-cs-projects'},
+];
+
+let searchToastTimer = null;
+function showSearchToast(){
+  const toast = document.getElementById('searchToast');
+  if(!toast) return;
+  toast.classList.add('show');
+  clearTimeout(searchToastTimer);
+  searchToastTimer = setTimeout(()=>toast.classList.remove('show'), 2600);
+}
+
+function runSearch(e){
+  if(e) e.preventDefault();
+  const input = document.getElementById('searchInput');
+  const q = (input.value || '').trim().toLowerCase();
+  if(!q) return false;
+  const match = searchIndex.find(item =>
+    item.keywords.some(k => k === q || k.includes(q) || q.includes(k))
+  );
+  if(match){
+    location.hash = match.view;
+    showView(match.view);
+    input.value = '';
+  } else {
+    showSearchToast();
+  }
+  return false;
+}
+</script>
+</body>
+</html>
